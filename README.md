@@ -1,58 +1,110 @@
-# Vishwas Ahuja | Engineering Portfolio 🚀
+# v i s h w a s - p o r t f o l i o | 2.1 🚀
 
-**An Elite Production-Grade Portfolio Orchestrated for the 2026 Kuberns AI Hackathon.**
+<div align="center">
+  <h3>Engineering Over Tutorials • Production-Grade Infrastructure • AI-Augmented Developer Experience</h3>
+  <p><strong>A high-performance, cinematic engineering portfolio built for the 2026 Kuberns AI Hackathon.</strong></p>
+  
+  <p>
+    <img src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
+    <img src="https://img.shields.io/badge/Vite-5.2-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
+    <img src="https://img.shields.io/badge/GSAP-3.14-88CE02?style=for-the-badge&logo=greensock&logoColor=white" alt="GSAP" />
+    <img src="https://img.shields.io/badge/Groq-Llama_3-f34f29?style=for-the-badge&logo=ai&logoColor=white" alt="Groq" />
+    <img src="https://img.shields.io/badge/Infrastructure-Kuberns_AI-blue?style=for-the-badge&logo=kubernetes&logoColor=white" alt="Kuberns AI" />
+  </p>
+</div>
 
-This isn't just a static website; it's a showcase of high-performance web engineering, cinematic UI orchestration, and agentic AI integration.
+---
 
-## 🤖 Flagship Feature: Hybrid AI Guide
-The portfolio features a custom-built **AI Assistant** (powered by Groq/Llama-3) that helps visitors evaluate my technical work.
-- **Agentic Logic**: Capable of deep-diving into my project architectures.
-- **Robust Fallback Engine**: If the primary LLM API is unavailable, the assistant automatically switches to a custom-built **Local Knowledge Engine**. This ensures a 100% uptime experience where the guide can still explain my "GitHub Scoring Multipliers" or "Real-time Sync Logic" without an external API.
+## 🏗️ System Overview
 
-## 🛠️ Engineering Stack
-- **Frontend Core**: React 18 (Component Architecture)
-- **Cinematic Motion**: GSAP 3 & Framer Motion (Orchestrated Reveals & Interactive HUD)
-- **Styling**: Vanilla CSS (Atomic Design System)
-- **API Strategy**: GitHub REST API (Live Social Proof)
-- **Infrastructure**: Kuberns AI (Edge Delivery & Automated DevOps)
+This repository represents more than a landing page—it is a live **architecture demonstration**. Every interaction, from the pre-loader system check to the real-time AI assistant, is engineered to demonstrate **systems thinking** and **applied software craftsmanship**.
 
-## 🏗️ Technical Architecture Focus
-### 1. GitHub Profile Analyzer
-- **Logic**: Multi-weighted scoring engine that aggregates Stars (x3), Repos (x2), and Followers (x2).
-- **Visualization**: Radar-map skill assessment normalized via Node.js backend logic.
+### 🤖 The Hybrid AI Brain (Flagship Feature)
+The portfolio features an integrated **AI Portfolio Guide** designed to help recruiters evaluate my technical resonance.
+- **Agentic Logic**: Uses multi-turn instruction chaining to explain complex project architectures.
+- **Fail-Safe Fallback**: Implemented a **Local Rule-Based Knowledge Engine** that takes over if the primary LLM (Llama-3 via Groq) is unavailable or if the VITE_GEMINI_API_KEY is not provided.
+- **Cinematic Orchestration**: Revealed using a custom GSAP spring-physics animation with dynamic blur filters and staggered child reveals.
 
-### 2. Supabase Kanban Board
-- **Real-time Sync**: PostgreSQL channels for sub-100ms synchronization.
-- **Security**: Row-Level Security (RLS) for isolated task management.
+---
 
-### 3. Neon Snake PWA
-- **Engineering**: Zero-dependency game loop with 'Illegal Turn Protection'.
-- **Persistence**: Full offline support via custom Service Worker implementation.
+## 🛠️ Technical Deep-Dives
 
-## 📊 Key Metrics
-- **Performance**: Lighthouse Score 95+ (Optimized via Vite)
-- **Responsiveness**: Fluid Mobile-First Grid System (Adapts from 4K to Mobile)
-- **Input Latency**: Sub-1ms response for PWA components.
+### 1. GitHub Profile Analyzer (The Logic Layer)
+> **Problem**: Raw GitHub profiles fail to communicate a developer's true consistency and weighted skill level.
+- **Engineering Solution**: Developed a multi-weighted scoring engine using a Node.js/Express backend.
+- **The Algorithm**:
+  - `BaseScore = (Stars * 3) + (Repos * 2) + (Followers * 2)`
+  - `Bonus = (ActivityMultiplier * 1.2) + (OrganizationLoyalty * 50)`
+- **Optimization**: Normalizes high-throughput data from the GitHub REST API into a 1-1000 score with radar-map visualization using Chart.js.
 
-## 🚀 Local Development
-1. **Clone the Repo**:
+### 2. Real-Time Kanban Board (The Persistence Layer)
+> **Problem**: State drift in collaborative task managers due to high-latency database sync.
+- **Engineering Solution**: Leveraged **PostgreSQL Real-time Channels** via Supabase for sub-100ms synchronization across instances.
+- **State Management**: Implemented optimistic UI updates to ensure the interface remains fluid while background sync handles persistence and Row-Level Security (RLS).
+
+### 3. Neon Snake PWA (The Performance Layer)
+> **Problem**: High-input lag and lack of offline support in traditional browser-based games.
+- **Engineering Solution**: A zero-dependency JavaScript game engine under 50KB.
+- **Features**:
+  - **Illegal Turn Protection**: Logical gate preventing 180-degree self-collisions.
+  - **Frame-Perfect Loop**: Optimized game loop resulting in <1ms input latency.
+  - **Connectivity**: Full offline capability via custom PWA Service Worker implementation and Web App Manifest.
+
+---
+
+## 🎨 Design & Motion Philosophy
+
+The UI is built on a **HUD (Heads-Up Display)** design system, prioritizing information density without visual clutter.
+- **GSAP & ScrollTrigger**: Every section reveal is orchestrated via a timeline, ensuring that motion feels meaningful and signals "System Loading" or "Data Insight."
+- **Framer Motion**: Handles complex layout transitions, specifically in the mobile view where elements transform between lists and expanded case studies.
+- **Glassmorphism**: Uses `backdrop-filter: blur()` and HSL-based translucency to create depth tiers, suggesting a layered software stack.
+
+---
+
+## 🚀 Infrastructure & Deployment
+
+This portfolio is a production showcase of the **Kuberns AI Ecosystem**.
+- **Edge Delivery**: Deployed on globally distributed edge nodes for sub-500ms initial page load.
+- **CI/CD Pipeline**: Automated deployment triggers on `main` branch push, with automatic SSL provisioning and asset compression.
+- **Observability**: Features a live "System Architecture" HUD in the hero section signaling the health of the connection to the AI nodes.
+
+---
+
+## 💻 Local Development Setup
+
+To replicate this environment locally:
+
+1. **Clone and Enter**:
    ```bash
    git clone https://github.com/vishwasahuja62-maker/vishwas-portfolio.git
+   cd vishwas-portfolio
    ```
-2. **Install Dependencies**:
+
+2. **Environment Configuration**:
+   Create a `.env.local` to enable the AI Brain:
+   ```env
+   VITE_GEMINI_API_KEY=your_groq_or_gemini_key
+   ```
+
+3. **Install & Run**:
    ```bash
    npm install
-   ```
-3. **Set Environment Variables**:
-   Create a `.env.local` file:
-   ```env
-   VITE_GEMINI_API_KEY=your_key_here
-   ```
-4. **Boot Up**:
-   ```bash
    npm run dev
    ```
 
+4. **Production Build**:
+   ```bash
+   npm run build
+   ```
+
 ---
-Built with 💻 by **Vishwas Ahuja** | 2nd Year BTech CSE (Data Science)
-*"Engineering Over Tutorials"*
+
+## 📬 Connectivity
+
+- **LinkedIn**: [vishwa-ahuja62](https://linkedin.com/in/vishwa-ahuja62)
+- **GitHub**: [@vishwasahuja62-maker](https://github.com/vishwasahuja62-maker)
+- **Email**: [vishwasahuja62@gmail.com](mailto:vishwasahuja62@gmail.com)
+
+<div align="center">
+  <sub>Built with 💻 by Vishwas Ahuja | "Engineering Over Tutorials"</sub>
+</div>
