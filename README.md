@@ -1,4 +1,4 @@
-# v i s h w a s - p o r t f o l i o | 2.1 🚀
+# Vishwas Ahuja - Portfolio Website | 2.1 🚀
 
 <div align="center">
   <h3>Engineering Over Tutorials • Production-Grade Infrastructure • AI-Augmented Developer Experience</h3>
@@ -98,12 +98,6 @@ To replicate this environment locally:
    ```
 
 ---
-
-## 📬 Connectivity
-
-- **LinkedIn**: [vishwa-ahuja62](https://linkedin.com/in/vishwa-ahuja62)
-- **GitHub**: [@vishwasahuja62-maker](https://github.com/vishwasahuja62-maker)
-- **Email**: [vishwasahuja62@gmail.com](mailto:vishwasahuja62@gmail.com)
 
 <div align="center">
   <sub>Built with 💻 by Vishwas Ahuja | "Engineering Over Tutorials"</sub>
