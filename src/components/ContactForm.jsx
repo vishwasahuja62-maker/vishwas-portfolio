@@ -5,14 +5,7 @@ import {
     Mail, 
     Send, 
     CheckCircle2, 
-    AlertCircle, 
-    Calendar, 
-    Clock, 
-    Sparkles, 
-    ArrowRight,
-    Github,
-    Linkedin,
-    ExternalLink
+    AlertCircle 
 } from 'lucide-react';
 
 const ContactForm = () => {
@@ -44,43 +37,41 @@ const ContactForm = () => {
         setStatus('sending');
 
         try {
-            // EmailJS send: user can configure VITE_EMAILJS_SERVICE_ID, etc.
-            const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_portfolio';
-            const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_contact';
-            const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'public_key_mock';
+            const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+            const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+            const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
-            // If keys are placeholders, fallback gracefully to mailto or instant confirmed preview
-            if (serviceId === 'service_portfolio') {
-                // Mock delay to give realistic feedback and fallback to mailto opening
-                await new Promise((r) => setTimeout(r, 900));
-                
-                // Trigger mailto client as backup delivery guarantee
-                const mailtoUrl = `mailto:vishwasahuja62@gmail.com?subject=${encodeURIComponent(formState.subject || 'Portfolio Inquiry')}&body=${encodeURIComponent(`Hi Vishwas,\n\nMy name is ${formState.name} (${formState.email}).\n\n${formState.message}`)}`;
-                
-                setStatus('success');
-                setFormState({ name: '', email: '', subject: '', message: '' });
+            // If credentials are not yet added in .env/.env.local
+            if (!serviceId || !templateId || !publicKey) {
+                setStatus('error');
+                setErrorMessage('EmailJS credentials missing. Please add VITE_EMAILJS_SERVICE_ID, VITE_EMAILJS_TEMPLATE_ID, and VITE_EMAILJS_PUBLIC_KEY in your .env or .env.local file.');
+                return;
+            }
 
-                // Try opening user mail client as a failsafe
-                const link = document.createElement('a');
-                link.href = mailtoUrl;
-                link.target = '_blank';
-                link.click();
-            } else {
-                await emailjs.send(serviceId, templateId, {
+            // Real dispatch through EmailJS
+            const result = await emailjs.send(
+                serviceId, 
+                templateId, 
+                {
                     from_name: formState.name,
                     from_email: formState.email,
-                    subject: formState.subject || 'New Portfolio Message',
+                    subject: formState.subject || 'New Portfolio Inquiry',
                     message: formState.message,
                     to_email: 'vishwasahuja62@gmail.com'
-                }, publicKey);
+                }, 
+                publicKey
+            );
 
+            if (result.status === 200 || result.text === 'OK') {
                 setStatus('success');
                 setFormState({ name: '', email: '', subject: '', message: '' });
+            } else {
+                throw new Error('Email service returned non-200 status');
             }
         } catch (err) {
             console.error('Email send failed:', err);
             setStatus('error');
-            setErrorMessage('Could not deliver directly. Please use the direct email button below!');
+            setErrorMessage(err?.text || err?.message || 'Could not send message. Please verify your EmailJS keys in .env.local.');
         }
     };
 
@@ -155,7 +146,7 @@ const ContactForm = () => {
                 {status === 'success' && (
                     <div className="form-alert alert-success">
                         <CheckCircle2 size={16} />
-                        <span>Message prepared & dispatched! Thank you for reaching out.</span>
+                        <span>Message dispatched directly to Vishwas! Thank you for reaching out.</span>
                     </div>
                 )}
 
