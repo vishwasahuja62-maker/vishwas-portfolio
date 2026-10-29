@@ -1838,3 +1838,53 @@
     border-radius: 9999px;
     letter-spacing: 0.03em;
 }
+
+/* ─── Merged PR Link Pills (Achievements) ──────────────────────────────── */
+.pr-links-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    margin-top: 0.75rem;
+}
+
+.pr-link-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    background: rgba(34, 197, 94, 0.06);
+    border: 1px solid rgba(34, 197, 94, 0.25);
+    border-radius: 9999px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.72rem;
+    transition: all 0.2s ease;
+    width: fit-content;
+}
+
+.pr-link-pill:hover {
+    background: rgba(34, 197, 94, 0.14);
+    border-color: rgba(34, 197, 94, 0.5);
+    color: #86efac;
+}
+
+.pr-link-pill svg {
+    color: #4ade80;
+    flex-shrink: 0;
+}
+
+.pr-num {
+    font-weight: 700;
+    color: #4ade80;
+    font-family: var(--font-mono);
+}
+
+.pr-label {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.pr-repo {
+    color: var(--text-muted);
+    font-style: italic;
+}

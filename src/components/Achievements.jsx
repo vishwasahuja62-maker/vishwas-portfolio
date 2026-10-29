@@ -1,22 +1,43 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Trophy, Award, GitCommit, ShieldCheck, CheckCircle2, Star } from 'lucide-react';
+import { Trophy, Award, GitMerge, GitCommit, ShieldCheck, CheckCircle2, Star, ExternalLink } from 'lucide-react';
 
 const Achievements = () => {
     const achievements = [
         {
-            title: "Dean’s List and VC List Award Recipient",
+            title: "Dean's List and VC List Award Recipient",
             subtitle: "Academic & Leadership Excellence",
-            description: "Honored on both the Dean’s List and Vice Chancellor’s List at Manav Rachna University for outstanding academic ranking and overall performance.",
+            description: "Honored on both the Dean's List and Vice Chancellor's List at Manav Rachna University for outstanding academic ranking and overall performance.",
             icon: <Trophy size={22} />,
             tag: "Honors"
         },
         {
-            title: "15+ Public Repositories & Active Open-Source Contributor",
-            subtitle: "Open-Source Pull Requests & Real-World Contributions",
-            description: "Actively authored Pull Requests across open-source ecosystems (including ConvoBrains Zero-Cost CRM, Corsair Agent Integration Layer, and MRU QA Portal), maintaining 15+ public repositories with modular full-stack architecture.",
+            title: "2 Merged Open-Source Pull Requests",
+            subtitle: "Real-World OSS Contributions — Merged by Maintainers",
+            description: "Contributed production-ready features to two external open-source repositories that were reviewed, approved, and merged by project maintainers.",
+            icon: <GitMerge size={22} />,
+            tag: "Open Source",
+            prs: [
+                {
+                    label: "feat: export activity audit log as CSV/JSON",
+                    repo: "ConvoBrains/zero-cost-crm",
+                    url: "https://github.com/ConvoBrains/zero-cost-crm/pull/138",
+                    pr: "#138"
+                },
+                {
+                    label: "feat(amcards): add Amcards plugin",
+                    repo: "corsairdev/corsair",
+                    url: "https://github.com/corsairdev/corsair/pull/668",
+                    pr: "#668"
+                }
+            ]
+        },
+        {
+            title: "15+ Public Repositories on GitHub",
+            subtitle: "Full-Stack, ML, Cloud & Systems Projects",
+            description: "Maintaining 15+ public repositories spanning full-stack web apps, machine learning experiments, Java enterprise systems, and open-source contributions — with modular, production-grade architecture.",
             icon: <GitCommit size={22} />,
-            tag: "Open Source"
+            tag: "GitHub"
         },
         {
             title: "Hackathon Competitor & Builder",
@@ -84,6 +105,25 @@ const Achievements = () => {
                                         </div>
                                         <p className="achieve-sub">{item.subtitle}</p>
                                         <p className="achieve-desc">{item.description}</p>
+                                        {item.prs && (
+                                            <div className="pr-links-list">
+                                                {item.prs.map((pr, i) => (
+                                                    <a
+                                                        key={i}
+                                                        href={pr.url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="pr-link-pill"
+                                                    >
+                                                        <GitMerge size={13} />
+                                                        <span className="pr-num">{pr.pr}</span>
+                                                        <span className="pr-label">{pr.label}</span>
+                                                        <span className="pr-repo">({pr.repo})</span>
+                                                        <ExternalLink size={11} />
+                                                    </a>
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
                                 </motion.div>
                             ))}
@@ -128,4 +168,3 @@ const Achievements = () => {
 };
 
 export default Achievements;
-
