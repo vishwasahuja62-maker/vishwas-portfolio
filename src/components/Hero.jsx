@@ -5,7 +5,6 @@ import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Terminal, Database, CloudLightning, Server, ChevronRight } from 'lucide-react';
 import Typewriter from './Typewriter';
-import VisitorCounter from './VisitorCounter';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -205,7 +204,6 @@ const Hero = ({ onNavigate }) => {
                         <div className="status-badge pulse-badge">
                             <span className="pulse-dot active"></span> Solving Real-World Engineering Problems
                         </div>
-                        <VisitorCounter />
                     </div>
 
                     <h1 className="hero-title">
@@ -242,7 +240,7 @@ const Hero = ({ onNavigate }) => {
                     </div>
                 </div>
 
-                {/* Right Column: Original Premium Tech Panel with Terminal Dots & Pulsing Status */}
+                {/* Right Column: Cyber Terminal Tech Panel */}
                 <div
                     className="hero-right"
                     style={!isMobile ? {
