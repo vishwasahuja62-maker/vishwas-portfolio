@@ -1,49 +1,47 @@
 import React, { useState, useEffect } from 'react';
-import { Eye, ShieldCheck } from 'lucide-react';
+import { Eye } from 'lucide-react';
 
 const VisitorCounter = () => {
     const [views, setViews] = useState(null);
 
     useEffect(() => {
-        // Simple counter using hits.sh or lightweight client counter
-        const countKey = 'vishwas_portfolio_view_count';
-        try {
-            // First display local/cached value quickly
-            let stored = localStorage.getItem(countKey);
-            let count = stored ? parseInt(stored, 10) : 482;
-            
-            // Check if visited in this session to prevent spamming
-            const sessionKey = 'vishwas_portfolio_visited';
-            if (!sessionStorage.getItem(sessionKey)) {
-                count += 1;
-                sessionStorage.setItem(sessionKey, 'true');
-                localStorage.setItem(countKey, count.toString());
-            }
-            setViews(count);
-
-            // Fetch live hits from free hit counter API if reachable
-            fetch('https://hits.sh/vishwasahuja62-maker.portfolio.json')
-                .then(res => res.json())
-                .then(data => {
-                    if (data && data.hits) {
-                        setViews(data.hits);
-                        localStorage.setItem(countKey, data.hits.toString());
-                    }
-                })
-                .catch(() => {
-                    // Fallback to our client counter
+        // Fetch 100% REAL hit counter from hits.sh SVG backend
+        // Hits.sh automatically increments and returns the exact live visitor count
+        const fetchRealCount = async () => {
+            try {
+                const res = await fetch('https://hits.sh/vishwasahuja62-maker.portfolio.svg', {
+                    cache: 'no-cache'
                 });
-        } catch (e) {
-            setViews(483);
-        }
+                const svgText = await res.text();
+                // Extract the exact real hit number rendered inside the SVG <text> tag
+                const matches = svgText.match(/>(\d+)</g);
+                if (matches && matches.length > 0) {
+                    const numberStr = matches[matches.length - 1].replace(/[><]/g, '');
+                    const realCount = parseInt(numberStr, 10);
+                    if (!isNaN(realCount)) {
+                        setViews(realCount);
+                        localStorage.setItem('vishwas_real_hits', realCount.toString());
+                        return;
+                    }
+                }
+            } catch (err) {
+                // If offline or blocked, read from last saved real count
+                const cached = localStorage.getItem('vishwas_real_hits');
+                if (cached) {
+                    setViews(parseInt(cached, 10));
+                }
+            }
+        };
+
+        fetchRealCount();
     }, []);
 
     return (
         <div className="visitor-counter-pill glass">
             <span className="live-dot-pulse"></span>
             <Eye size={13} className="text-cyan" />
-            <span className="counter-label">Live Portfolio Hits:</span>
-            <span className="counter-number">{views ? views.toLocaleString() : '...'}</span>
+            <span className="counter-label">Live Unique Hits:</span>
+            <span className="counter-number">{views !== null ? views.toLocaleString() : 'Syncing...'}</span>
         </div>
     );
 };
