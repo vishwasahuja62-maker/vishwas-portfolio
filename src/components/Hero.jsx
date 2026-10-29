@@ -7,7 +7,7 @@ import { Terminal, Database, CloudLightning, Server, ChevronRight } from 'lucide
 
 gsap.registerPlugin(ScrollTrigger);
 
-const Hero = () => {
+const Hero = ({ onNavigate }) => {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const heroRef = useRef(null);
     const techPanelRef = useRef(null);
@@ -214,9 +214,15 @@ const Hero = () => {
                     </p>
 
                     <div className="hero-ctas">
-                        <a href="#projects" className="btn btn-primary btn-glow">
-                            See My Projects <ChevronRight size={18} style={{ marginLeft: '4px' }} />
-                        </a>
+                        {onNavigate ? (
+                            <button onClick={() => onNavigate('projects')} className="btn btn-primary btn-glow">
+                                See My Projects <ChevronRight size={18} style={{ marginLeft: '4px' }} />
+                            </button>
+                        ) : (
+                            <a href="#projects" className="btn btn-primary btn-glow">
+                                See My Projects <ChevronRight size={18} style={{ marginLeft: '4px' }} />
+                            </a>
+                        )}
                         <a href="/cv_vishwas_btech.pdf" download="cv_vishwas_btech.pdf" className="btn btn-secondary btn-underline">
                             Get My Resume
                         </a>

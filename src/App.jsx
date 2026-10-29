@@ -1,27 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import logoImg from './assets/images.jpg';
 import Preloader from './components/Preloader';
-import Hero from './components/Hero';
+import Navbar from './components/Navbar';
+import Home from './components/Home';
 import About from './components/About';
+import Experience from './components/Experience';
+import Education from './components/Education';
 import Skills from './components/Skills';
 import Projects from './components/Projects';
-import AiFeatures from './components/AiFeatures';
-import Deployment from './components/Deployment';
+import Achievements from './components/Achievements';
 import Contact from './components/Contact';
 import AiAssistant from './components/AiAssistant';
 import Background from './components/Background';
 import CustomCursor from './components/CustomCursor';
 import CommandPalette from './components/CommandPalette';
 import SystemLogs from './components/SystemLogs';
-import { gsap } from 'gsap';
-import { useGSAP } from '@gsap/react';
+import { ArrowLeft } from 'lucide-react';
 
 function App() {
     const [isLoading, setIsLoading] = useState(() => {
-        // If we're in development, you might want to see it, 
-        // but for UX, skipping after first load is better.
         return !sessionStorage.getItem('portfolio_preloader_seen');
     });
+    const [currentPage, setCurrentPage] = useState('home');
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const handlePreloaderComplete = () => {
@@ -29,8 +28,10 @@ function App() {
         setIsLoading(false);
     };
 
-    const handleNavClick = () => {
+    const navigateTo = (pageId) => {
+        setCurrentPage(pageId);
         setMobileMenuOpen(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     // Lock body scroll when mobile menu is open
@@ -43,7 +44,7 @@ function App() {
         return () => { document.body.style.overflow = ''; };
     }, [mobileMenuOpen]);
 
-    // Subtle UI sound logic
+    // UI Tick sound
     const playTick = () => {
         try {
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -62,7 +63,7 @@ function App() {
 
     useEffect(() => {
         const handleInteraction = (e) => {
-            if (e.target.closest('a, button, .command-item, .contact-card')) {
+            if (e.target.closest('a, button, .command-item, .contact-card, .hub-card, .nav-island-btn')) {
                 playTick();
             }
         };
@@ -70,8 +71,27 @@ function App() {
         return () => window.removeEventListener('mouseover', handleInteraction);
     }, []);
 
-    // Removed redundant staggered reveal to let individual components handle their own build-up animations
-
+    const renderPageContent = () => {
+        switch (currentPage) {
+            case 'projects':
+                return <Projects />;
+            case 'experience':
+                return <Experience />;
+            case 'skills':
+                return <Skills />;
+            case 'education':
+                return <Education />;
+            case 'achievements':
+                return <Achievements />;
+            case 'about':
+                return <About />;
+            case 'contact':
+                return <Contact />;
+            case 'home':
+            default:
+                return <Home onNavigate={navigateTo} />;
+        }
+    };
 
     return (
         <div className="app-container">
@@ -81,58 +101,33 @@ function App() {
             ) : (
                 <>
                     <Background />
-                    <CommandPalette />
+                    <CommandPalette onNavigate={navigateTo} />
                     <SystemLogs />
 
-                    <nav className="navbar">
-                        <div className="nav-logo">
-                            <img src={logoImg} alt="Logo" className="nav-logo-img" />
-                        </div>
-
-                        {/* Desktop nav links */}
-                        <div className="nav-links nav-links-desktop">
-                            <a href="#about">About</a>
-                            <a href="#skills">Skills</a>
-                            <a href="#projects">Projects</a>
-                            <a href="#deployment">Deployment</a>
-                            <a href="#contact" className="nav-cta">Contact</a>
-                        </div>
-
-                        {/* Hamburger button (mobile only) */}
-                        <button
-                            className={`hamburger-btn ${mobileMenuOpen ? 'is-active' : ''}`}
-                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            aria-label="Toggle navigation menu"
-                            aria-expanded={mobileMenuOpen}
-                        >
-                            <span className="hamburger-line"></span>
-                            <span className="hamburger-line"></span>
-                            <span className="hamburger-line"></span>
-                        </button>
-                    </nav>
-
-                    {/* Mobile nav overlay */}
-                    <div className={`mobile-nav-overlay ${mobileMenuOpen ? 'is-open' : ''}`}>
-                        <div className="mobile-nav-content">
-                            <a href="#about" onClick={handleNavClick}>About</a>
-                            <a href="#skills" onClick={handleNavClick}>Skills</a>
-                            <a href="#projects" onClick={handleNavClick}>Projects</a>
-                            <a href="#deployment" onClick={handleNavClick}>Deployment</a>
-                            <a href="#contact" onClick={handleNavClick}>Contact</a>
-                        </div>
-                        <div className="mobile-nav-footer">
-                            <p>© {new Date().getFullYear()} Vishwas Ahuja</p>
-                        </div>
-                    </div>
+                    {/* Elite Floating Dock Navbar */}
+                    <Navbar
+                        currentPage={currentPage}
+                        onNavigate={navigateTo}
+                        mobileMenuOpen={mobileMenuOpen}
+                        setMobileMenuOpen={setMobileMenuOpen}
+                    />
 
                     <main className="main-content-reveal">
-                        <Hero />
-                        <About />
-                        <Skills />
-                        <Projects />
-                        <AiFeatures />
-                        <Deployment />
-                        <Contact />
+                        {currentPage !== 'home' ? (
+                            <div className="page-wrapper-view">
+                                <div className="container">
+                                    <div className="page-breadcrumb-bar">
+                                        <button className="page-back-button" onClick={() => navigateTo('home')}>
+                                            <ArrowLeft size={16} />
+                                            <span>Back to Home Overview</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                {renderPageContent()}
+                            </div>
+                        ) : (
+                            renderPageContent()
+                        )}
                         <AiAssistant />
                     </main>
 

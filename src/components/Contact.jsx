@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Github, Linkedin, ArrowUpRight } from 'lucide-react';
+import { Mail, Github, Linkedin, ArrowUpRight, Globe, Phone } from 'lucide-react';
 
 const Contact = () => {
     const links = [
@@ -12,6 +12,20 @@ const Contact = () => {
             color: "#f59e0b"
         },
         {
+            icon: <Mail size={22} />,
+            label: "University Email",
+            value: "vishwas_ahuja24@mru.ac.in",
+            href: "mailto:vishwas_ahuja24@mru.ac.in",
+            color: "#06b6d4"
+        },
+        {
+            icon: <Phone size={22} />,
+            label: "Phone",
+            value: "+91-8882449462",
+            href: "tel:+918882449462",
+            color: "#10b981"
+        },
+        {
             icon: <Github size={22} />,
             label: "GitHub",
             value: "vishwasahuja62-maker",
@@ -21,9 +35,16 @@ const Contact = () => {
         {
             icon: <Linkedin size={22} />,
             label: "LinkedIn",
-            value: "Connect with me",
+            value: "vishwas-ahuja-6b5225327",
             href: "https://www.linkedin.com/in/vishwas-ahuja-6b5225327",
             color: "#3b82f6"
+        },
+        {
+            icon: <Globe size={22} />,
+            label: "Portfolio Site",
+            value: "sites.google.com/view/vishwasahuja",
+            href: "https://sites.google.com/view/vishwasahuja/home",
+            color: "#a855f7"
         }
     ];
 

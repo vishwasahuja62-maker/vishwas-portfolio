@@ -14,6 +14,50 @@ const Projects = () => {
 
     const cases = [
         {
+            id: "elevatehire",
+            title: "ElevateHire – Full Stack Recruitment Platform",
+            repo: "vishwasahuja62-maker/ElevateHire",
+            problem: "Recruiters and job seekers lack an integrated, transparent hiring lifecycle that manages everything from applications to real-time interviews in one hub.",
+            challenge: "Engineered a dual-dashboard full-stack recruitment architecture with Role-Based Access Control (RBAC), JWT authentication, and a real-time messaging pipeline powered by Socket.IO. Developed a fluid Kanban-based Applicant Tracking System (ATS), interview scheduler, and hiring analytics visualization.",
+            thoughtProcess: "Implemented secure cloud database integration with PostgreSQL (Supabase) and structured REST APIs with Docker-ready modular architecture adhering to enterprise software engineering standards.",
+            techStack: "React.js, Node.js, Express.js, PostgreSQL, Supabase, Socket.IO, Docker",
+            outcome: "Streamlined end-to-end recruitment with live ATS drag-and-drop, instantaneous candidate-recruiter messaging, and resilient role security.",
+            lighthouse: { perf: 98, access: 100, best: 98, seo: 100 },
+            github: "https://github.com/vishwasahuja62-maker",
+            link: "#",
+            snippet: `// Real-Time Socket.IO Pipeline & JWT Auth
+io.use((socket, next) => {
+  const token = socket.handshake.auth.token;
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) return next(new Error('Authentication failed'));
+    socket.user = decoded;
+    next();
+  });
+});`
+        },
+        {
+            id: "mytruecompanion",
+            title: "My True Companion – AI-Powered Learning Platform",
+            repo: "vishwasahuja62-maker/My-True-Companion",
+            problem: "Students struggle with generic study material and lack personalized, on-demand AI guidance for conceptual doubt resolution.",
+            challenge: "Designed and deployed an AI-assisted educational system featuring intelligent doubt resolution, personalized progress tracking, and student dashboards. Focused on sub-500ms response streaming and seamless user onboarding.",
+            thoughtProcess: "Integrated LLM reasoning workflows with Supabase authentication and PostgreSQL cloud storage to persist learning milestones. Refined UX iteratively using feedback from 20+ active community users.",
+            techStack: "React.js, Node.js, PostgreSQL, Supabase, AI Integration, Tailwind CSS",
+            outcome: "Successfully deployed and adopted by 20+ active users with sustained positive retention and real-world doubt resolution.",
+            lighthouse: { perf: 99, access: 98, best: 100, seo: 100 },
+            github: "https://github.com/vishwasahuja62-maker",
+            link: "#",
+            snippet: `// AI Doubt Solving & Stream Handler
+const resolveDoubt = async (userId, prompt) => {
+  const context = await getLearnerContext(userId);
+  const stream = await aiClient.chat.completions.create({
+    model: 'llama-3.3-70b-versatile',
+    messages: [{ role: 'system', content: context }, { role: 'user', content: prompt }]
+  });
+  return stream;
+};`
+        },
+        {
             id: "analyzer",
             title: "GitHub Profile Analyzer",
             repo: "vishwasahuja62-maker/Github-Profile-Analyzer",

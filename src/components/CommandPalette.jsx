@@ -2,17 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Command, ArrowRight, Github, Code2, Terminal, User } from 'lucide-react';
 
-const CommandPalette = () => {
+const CommandPalette = ({ onNavigate }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [query, setQuery] = useState('');
 
     const items = [
-        { icon: <User size={18} />, label: 'Jump to About', target: '#about', category: 'Navigation' },
-        { icon: <Code2 size={18} />, label: 'Jump to Projects', target: '#projects', category: 'Navigation' },
-        { icon: <Terminal size={18} />, label: 'View Deployment', target: '#deployment', category: 'Navigation' },
-        { icon: <Search size={18} />, label: 'Search GitHub Analyzer', target: '#projects', category: 'Projects' },
-        { icon: <Search size={18} />, label: 'Search ProKanban Elite', target: '#projects', category: 'Projects' },
-        { icon: <Github size={18} />, label: 'Github Profile', target: 'https://github.com/vishwasahuja62-maker', category: 'External' },
+        { icon: <User size={18} />, label: 'Jump to Home Overview', page: 'home', category: 'Navigation' },
+        { icon: <User size={18} />, label: 'Jump to About & Mindset', page: 'about', category: 'Navigation' },
+        { icon: <Code2 size={18} />, label: 'View Work Experience', page: 'experience', category: 'Navigation' },
+        { icon: <Code2 size={18} />, label: 'Jump to Projects', page: 'projects', category: 'Navigation' },
+        { icon: <Terminal size={18} />, label: 'View Skills Matrix', page: 'skills', category: 'Navigation' },
+        { icon: <User size={18} />, label: 'View Education', page: 'education', category: 'Navigation' },
+        { icon: <Terminal size={18} />, label: 'View Achievements & Certifications', page: 'achievements', category: 'Navigation' },
+        { icon: <Search size={18} />, label: 'View ElevateHire Platform', page: 'projects', category: 'Projects' },
+        { icon: <Search size={18} />, label: 'View My True Companion', page: 'projects', category: 'Projects' },
+        { icon: <Search size={18} />, label: 'Search GitHub Analyzer', page: 'projects', category: 'Projects' },
+        { icon: <Search size={18} />, label: 'Search ProKanban Elite', page: 'projects', category: 'Projects' },
+        { icon: <User size={18} />, label: 'Contact Vishwas', page: 'contact', category: 'Navigation' },
+        { icon: <Github size={18} />, label: 'Github Profile', url: 'https://github.com/vishwasahuja62-maker', category: 'External' },
     ];
 
     useEffect(() => {
@@ -32,11 +39,11 @@ const CommandPalette = () => {
         item.label.toLowerCase().includes(query.toLowerCase())
     );
 
-    const handleSelect = (target) => {
-        if (target.startsWith('http')) {
-            window.open(target, '_blank');
-        } else {
-            document.querySelector(target)?.scrollIntoView({ behavior: 'smooth' });
+    const handleSelect = (item) => {
+        if (item.url) {
+            window.open(item.url, '_blank');
+        } else if (item.page && onNavigate) {
+            onNavigate(item.page);
         }
         setIsOpen(false);
         setQuery('');
@@ -61,33 +68,37 @@ const CommandPalette = () => {
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
                             />
-                            <div className="esc-hint">ESC</div>
+                            <kbd className="esc-badge">ESC</kbd>
                         </div>
 
-                        <div className="command-results">
-                            {filteredItems.length > 0 ? (
+                        <div className="command-results-list">
+                            {filteredItems.length === 0 ? (
+                                <div className="command-empty">No results found.</div>
+                            ) : (
                                 filteredItems.map((item, idx) => (
                                     <div
                                         key={idx}
                                         className="command-item"
-                                        onClick={() => handleSelect(item.target)}
+                                        onClick={() => handleSelect(item)}
                                     >
-                                        <div className="item-icon">{item.icon}</div>
-                                        <div className="item-details">
+                                        <div className="item-left">
+                                            <span className="item-icon">{item.icon}</span>
                                             <span className="item-label">{item.label}</span>
-                                            <span className="item-category">{item.category}</span>
                                         </div>
-                                        <ArrowRight size={14} className="arrow-icon" />
+                                        <div className="item-right">
+                                            <span className="item-cat">{item.category}</span>
+                                            <ArrowRight size={14} className="arrow" />
+                                        </div>
                                     </div>
                                 ))
-                            ) : (
-                                <div className="no-results">No results found for "{query}"</div>
                             )}
                         </div>
 
                         <div className="command-footer">
-                            <div className="hint"><Command size={12} /> + K to toggle</div>
-                            <div className="hint"><ArrowRight size={14} style={{ rotate: '90deg' }} /> to navigate</div>
+                            <span>Navigation shortcut</span>
+                            <div className="keys">
+                                <kbd>Ctrl</kbd> + <kbd>K</kbd> to open
+                            </div>
                         </div>
                     </motion.div>
                 </div>

@@ -23,19 +23,19 @@ const Skills = () => {
             category: "Frontend",
             icon: <Code2 size={24} />,
             usage: "Core UI engine for high-performance dashboard architecture.",
-            howIUse: "Component-driven development with emphasis on performance profiling and real-time HMR. Used to build the entire Portfolio and Kanban interface.",
-            projects: ["GitHub Profile Analyzer", "Supabase Kanban Board"],
+            howIUse: "Component-driven development with emphasis on performance profiling and real-time HMR. Used to build the entire Portfolio, ElevateHire, and My True Companion interfaces.",
+            projects: ["ElevateHire", "My True Companion", "GitHub Profile Analyzer"],
             role: "View Layer & State Orchestration",
             badges: ["Production", "Optimized"]
         },
         {
             id: 'tailwind',
-            name: "TailwindCSS",
+            name: "TailwindCSS & CSS3",
             category: "Frontend",
             icon: <Layers size={24} />,
-            usage: "Utility-first CSS framework for rapid UI development.",
-            howIUse: "Implementing complex design systems using custom JIT configurations. Used for the elite styling of the Kanban Board.",
-            projects: ["Supabase Kanban Board", "Live Portfolio"],
+            usage: "Utility-first CSS framework and modern stylesheet architecture.",
+            howIUse: "Implementing complex responsive design systems, animations, and custom styling across web applications.",
+            projects: ["ElevateHire", "Supabase Kanban Board", "Live Portfolio"],
             role: "Styling & Design System",
             badges: ["Responsive", "Utility-First"]
         },
@@ -68,22 +68,44 @@ const Skills = () => {
             name: "Node.js & Express",
             category: "Backend",
             icon: <Terminal size={24} />,
-            usage: "Asynchronous runtime for scalable logic and API routing.",
-            howIUse: "Logic layer management and API orchestration for data-heavy applications.",
-            projects: ["GitHub Profile Analyzer"],
+            usage: "Asynchronous runtime for scalable logic and REST API routing.",
+            howIUse: "Building secure REST APIs, role-based access control (RBAC), and server-side orchestration for web applications.",
+            projects: ["ElevateHire", "GitHub Profile Analyzer", "CodSoft Internships"],
             role: "Logic & Lifecycle Management",
             badges: ["Scalable", "REST Expert"]
         },
         {
-            id: 'supabase',
-            name: "Supabase Backend",
+            id: 'postgres',
+            name: "PostgreSQL & Supabase",
             category: "Backend",
             icon: <Database size={24} />,
-            usage: "BaaS for identity, storage, and real-time DB replication.",
-            howIUse: "Extensive use of RLS policies and PostgreSQL channels for real-time task synchronization in the Kanban app.",
-            projects: ["Supabase Kanban Board"],
+            usage: "Relational cloud database and BaaS with Row-Level Security (RLS).",
+            howIUse: "Designing relational schemas, cloud database queries, and leveraging real-time channels with RBAC policies.",
+            projects: ["ElevateHire", "My True Companion", "Supabase Kanban Board"],
             role: "Persistence & Security Layer",
-            badges: ["Realtime", "PostgreSQL"]
+            badges: ["PostgreSQL", "Cloud DB"]
+        },
+        {
+            id: 'socketio',
+            name: "Socket.IO",
+            category: "Backend",
+            icon: <Globe size={24} />,
+            usage: "Bidirectional, low-latency event-driven communication.",
+            howIUse: "Powering real-time messaging, instant live updates, and notification channels.",
+            projects: ["ElevateHire"],
+            role: "Real-time Communication",
+            badges: ["WebSockets", "Low-Latency"]
+        },
+        {
+            id: 'jwt-auth',
+            name: "JWT & Auth Security",
+            category: "Backend",
+            icon: <Database size={24} />,
+            usage: "Cryptographic token-based authorization and session integrity.",
+            howIUse: "Implementing JWT authentication, Role-Based Access Control (RBAC), and secure endpoint protection.",
+            projects: ["ElevateHire", "My True Companion"],
+            role: "Authentication & Security",
+            badges: ["Secure", "RBAC"]
         },
         {
             id: 'rest-api',
@@ -91,45 +113,58 @@ const Skills = () => {
             category: "Backend",
             icon: <Globe size={24} />,
             usage: "Standardized communication interface for distributed systems.",
-            howIUse: "Consuming and processing high-throughput data from external providers.",
-            projects: ["GitHub Profile Analyzer"],
+            howIUse: "Consuming and processing high-throughput data from external and internal services.",
+            projects: ["ElevateHire", "GitHub Profile Analyzer"],
             role: "System Interoperability",
             badges: ["Interconnected", "Standardized"]
         },
+
+        // Languages & Core
         {
-            id: 'github-api',
-            name: "GitHub API",
+            id: 'javascript',
+            name: "JavaScript (ES6+)",
+            category: "Languages",
+            icon: <Code2 size={24} />,
+            usage: "Core programming language for frontend, backend, and full-stack logic.",
+            howIUse: "Writing modular, asynchronous, functional, and performance-tuned JavaScript code across the entire stack.",
+            projects: ["ElevateHire", "My True Companion", "Neon Snake PWA"],
+            role: "Core Stack",
+            badges: ["Proficient", "Full-Stack"]
+        },
+        {
+            id: 'c-lang',
+            name: "C & Java",
+            category: "Languages",
+            icon: <Terminal size={24} />,
+            usage: "Systems programming, Data Structures, OOP, and Algorithm fundamentals.",
+            howIUse: "Solving algorithmic problems, implementing data structures, and building robust object-oriented software.",
+            projects: ["MongoDB Java Path", "University CS Core"],
+            role: "Core Engineering",
+            badges: ["OOP", "Data Structures"]
+        },
+        {
+            id: 'mysql',
+            name: "MySQL",
             category: "Backend",
-            icon: <Search size={24} />,
-            usage: "REST & GraphQL access to GitHub's global dataset.",
-            howIUse: "Aggregating repository data, commit history, and user activity for real-time profile scoring.",
-            projects: ["GitHub Profile Analyzer"],
-            role: "External Intelligence Integration",
-            badges: ["Data-Driven", "API Expert"]
+            icon: <Database size={24} />,
+            usage: "Structured relational database management system.",
+            howIUse: "Relational database schema modeling, indexing, joins, and ACID transactional queries.",
+            projects: ["University CS Labs", "Database Systems"],
+            role: "Relational DB",
+            badges: ["SQL", "Relational"]
         },
 
         // AI & Emerging
         {
             id: 'ai-integration',
-            name: "GenAI Apps",
+            name: "GenAI & Prompt Engineering",
             category: "AI",
             icon: <Cpu size={24} />,
             usage: "Integration of high-reasoning LLMs into production interfaces.",
-            howIUse: "Building contextual AI assistants using Groq and Llama-3 models. Implementation of prompt chaining.",
-            projects: ["Live Portfolio", "GitHub Profile Analyzer"],
+            howIUse: "Building AI-assisted platforms, doubt-solving systems, and contextual portfolio guides with tailored prompt engineering.",
+            projects: ["My True Companion", "Live Portfolio", "Deloitte GenAI Program"],
             role: "Intelligent Interaction Layer",
             badges: ["AI-Assisted", "LLM Native"]
-        },
-        {
-            id: 'prompt-eng',
-            name: "Prompt Engineering",
-            category: "AI",
-            icon: <Terminal size={24} />,
-            usage: "Precision instruction design for maximizing LLM utility.",
-            howIUse: "Architecting multi-turn agentic workflows for the AI Portfolio Assistant.",
-            projects: ["Live Portfolio"],
-            role: "Model Interaction Strategy",
-            badges: ["Optimized", "Zero-Shot Expert"]
         },
         {
             id: 'rapid-proto',
@@ -156,30 +191,19 @@ const Skills = () => {
             badges: ["Fast", "Modern"]
         },
         {
-            id: 'deployment',
-            name: "Kuberns AI",
-            category: "Delivery",
-            icon: <Workflow size={24} />,
-            usage: "Automated AI-powered deployment orchestration.",
-            howIUse: "Zero-config deployment cycles with automated SSL and edge caching.",
-            projects: ["Live Portfolio"],
-            role: "Delivery Pipeline",
-            badges: ["Live", "Automated"]
-        },
-        {
             id: 'git-expert',
-            name: "Git & Versioning",
+            name: "Git, GitHub & VS Code",
             category: "Tools",
             icon: <Workflow size={24} />,
-            usage: "Distributed version control for collaborative development.",
-            howIUse: "Managing complex branch strategies and ensuring atomic commit history.",
-            projects: ["GitHub Profile Analyzer", "Neon Snake Game"],
+            usage: "Distributed version control and primary development environment.",
+            howIUse: "Maintaining 9+ public repositories with 118+ commits, branching, and automated CI/CD workflows.",
+            projects: ["GitHub Profile Analyzer", "ElevateHire", "My True Companion"],
             role: "Source Integrity Management",
-            badges: ["Distributed", "Reliable"]
+            badges: ["118+ Commits", "CI/CD Badge"]
         }
     ];
 
-    const categories = ["Frontend", "Backend", "AI", "Tools", "Delivery", "Strategy"];
+    const categories = ["Frontend", "Backend", "Languages", "AI", "Tools", "Strategy"];
     const [expandedMobileCat, setExpandedMobileCat] = useState(null);
     const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth <= 900 : false);
 
