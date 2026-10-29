@@ -48,7 +48,6 @@ const Navbar = ({ currentPage, onNavigate, mobileMenuOpen, setMobileMenuOpen }) 
                         <div className="brand-info-cluster">
                             <div className="brand-name-row">
                                 <span className="brand-primary-name">VISHWAS AHUJA</span>
-                                <span className="brand-version-chip">v2.4</span>
                             </div>
                             <div className="brand-role-row">
                                 <span className="terminal-prompt">&gt;</span>
