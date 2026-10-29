@@ -1,47 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Eye } from 'lucide-react';
 
 const VisitorCounter = () => {
-    const [views, setViews] = useState(null);
+    const [loaded, setLoaded] = useState(false);
 
-    useEffect(() => {
-        // Fetch 100% REAL hit counter from hits.sh SVG backend
-        // Hits.sh automatically increments and returns the exact live visitor count
-        const fetchRealCount = async () => {
-            try {
-                const res = await fetch('https://hits.sh/vishwasahuja62-maker.portfolio.svg', {
-                    cache: 'no-cache'
-                });
-                const svgText = await res.text();
-                // Extract the exact real hit number rendered inside the SVG <text> tag
-                const matches = svgText.match(/>(\d+)</g);
-                if (matches && matches.length > 0) {
-                    const numberStr = matches[matches.length - 1].replace(/[><]/g, '');
-                    const realCount = parseInt(numberStr, 10);
-                    if (!isNaN(realCount)) {
-                        setViews(realCount);
-                        localStorage.setItem('vishwas_real_hits', realCount.toString());
-                        return;
-                    }
-                }
-            } catch (err) {
-                // If offline or blocked, read from last saved real count
-                const cached = localStorage.getItem('vishwas_real_hits');
-                if (cached) {
-                    setViews(parseInt(cached, 10));
-                }
-            }
-        };
-
-        fetchRealCount();
-    }, []);
+    // Using hits.sh dynamic image badge directly via <img>
+    // <img> tags are NEVER blocked by CORS policies and are supported on localhost as well as production.
+    // The server increments live on every request and returns the actual count in an SVG badge.
+    const badgeUrl = `https://hits.sh/vishwasahuja62-maker.portfolio.svg?style=flat-square&label=Visitors&color=06b6d4&labelColor=0f172a&t=${Date.now()}`;
 
     return (
         <div className="visitor-counter-pill glass">
             <span className="live-dot-pulse"></span>
             <Eye size={13} className="text-cyan" />
-            <span className="counter-label">Live Unique Hits:</span>
-            <span className="counter-number">{views !== null ? views.toLocaleString() : 'Syncing...'}</span>
+            <span className="counter-label">Live Hits:</span>
+            <img 
+                src={badgeUrl} 
+                alt="Live Unique Visitor Counter" 
+                className="visitor-badge-img"
+                onLoad={() => setLoaded(true)}
+                onError={(e) => {
+                    // Fallback visual text if image fails to render
+                    e.currentTarget.style.display = 'none';
+                }}
+            />
+            {!loaded && <span className="counter-loading-text">Live Sync...</span>}
         </div>
     );
 };
