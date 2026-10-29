@@ -5,6 +5,20 @@ import { Briefcase, Calendar, MapPin, CheckCircle2 } from 'lucide-react';
 const Experience = () => {
     const experiences = [
         {
+            role: "Salesforce Developer & CRM Intern",
+            company: "Astrea IT Services",
+            period: "January 2026 – February 2026",
+            location: "Noida / Hybrid",
+            points: [
+                "Engineered a centralized, enterprise Student Placement Management System on Salesforce CRM replacing fragmented spreadsheet workflows.",
+                "Developed modular, reactive UI interfaces using Lightning Web Components (LWC) and integrated backend business logic with Apex controllers.",
+                "Automated end-to-end recruitment lifecycle pipelines (Applications, Eligibility, Interview Scheduling, Offer Letter generation) using Salesforce Flows and Validation Rules.",
+                "Architected a custom data model with Custom Objects, Record Types (On-Campus, Off-Campus, Internship), and Role-Based Access Control (RBAC).",
+                "Created real-time executive dashboards and reports providing instant visibility into student placement conversion rates and company metrics."
+            ],
+            tech: ["Salesforce CRM", "Apex", "Lightning Web Components (LWC)", "Salesforce Flows", "SFDX CLI", "SOQL/SOSL", "VS Code"]
+        },
+        {
             role: "Web Development Intern",
             company: "CodSoft",
             period: "June 2026 – July 2026",

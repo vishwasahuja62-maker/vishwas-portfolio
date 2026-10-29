@@ -28,10 +28,10 @@ const Home = ({ onNavigate }) => {
         {
             id: 'experience',
             title: 'Experience',
-            subtitle: 'CodSoft Internship',
-            desc: 'Full-stack development internship building production web apps with React, Node, PostgreSQL & Supabase.',
+            subtitle: 'Astrea IT & CodSoft',
+            desc: 'Salesforce Developer Intern at Astrea IT Services (Placement CRM, Apex, LWC) and Web Development Intern at CodSoft.',
             icon: <Briefcase size={24} />,
-            badge: 'Industry',
+            badge: '2 Internships',
             color: 'blue'
         },
         {

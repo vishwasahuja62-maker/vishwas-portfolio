@@ -14,6 +14,32 @@ const Projects = () => {
 
     const cases = [
         {
+            id: "salesforce-crm",
+            title: "Student Placement Management System – Salesforce CRM",
+            repo: "vishwasahuja62-maker",
+            problem: "University campus placements suffer from chaotic spreadsheet tracking, missing access governance, and lack of real-time application visibility across students and recruiters.",
+            challenge: "Architected and delivered an enterprise cloud solution on Salesforce CRM featuring a 3-tier architecture. Built dynamic interfaces with Lightning Web Components (LWC), custom Apex controllers for eligibility validation, and record-triggered Salesforce Flows for instant status automation.",
+            thoughtProcess: "Modeled relational custom objects with Master-Detail relationships, Record Types (On-Campus, Off-Campus, Internship), and granular profile permissions. Deployed real-time executive analytics dashboards for university placement directors.",
+            techStack: "Salesforce CRM, Lightning Web Components (LWC), Apex, Salesforce Flows, SOQL, SFDX CLI",
+            outcome: "Automated end-to-end recruitment tracking, cut application processing overhead by 60%, and delivered real-time executive KPI dashboards.",
+            lighthouse: { perf: 99, access: 98, best: 100, seo: 96 },
+            github: "https://github.com/vishwasahuja62-maker",
+            link: "#",
+            snippet: `// Apex Controller: Dynamic Placement Application Filter
+public with sharing class PlacementController {
+    @AuraEnabled(cacheable=true)
+    public static List<Application__c> getEligibleApplications(Id driveId, Decimal minCgpa) {
+        return [
+            SELECT Id, Student__r.Name, Student__r.CGPA__c, Status__c, Drive__r.Company_Name__c
+            FROM Application__c
+            WHERE Drive__c = :driveId AND Student__r.CGPA__c >= :minCgpa
+            WITH SECURITY_ENFORCED
+            ORDER BY Student__r.CGPA__c DESC
+        ];
+    }
+}`
+        },
+        {
             id: "elevatehire",
             title: "ElevateHire – Full Stack Recruitment Platform",
             repo: "vishwasahuja62-maker/ElevateHire",

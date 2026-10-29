@@ -64,6 +64,17 @@ const Skills = () => {
 
         // Backend & DB
         {
+            id: 'salesforce',
+            name: "Salesforce CRM & Apex",
+            category: "Backend",
+            icon: <Globe size={24} />,
+            usage: "Cloud CRM architecture, Apex controllers, and Lightning Web Components (LWC).",
+            howIUse: "Building custom objects, automated business flows, SOQL queries, and enterprise CRM solutions.",
+            projects: ["Student Placement Management System", "Astrea IT Services Internship"],
+            role: "Enterprise Cloud Architecture",
+            badges: ["Salesforce", "LWC & Apex"]
+        },
+        {
             id: 'node',
             name: "Node.js & Express",
             category: "Backend",
