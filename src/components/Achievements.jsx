@@ -12,9 +12,9 @@ const Achievements = () => {
             tag: "Honors"
         },
         {
-            title: "9+ Public Repositories & 118+ GitHub Contributions",
-            subtitle: "Consistent Open-Source Track Record",
-            description: "Actively building public repositories with continuous Git commits, modular architectures, and scalable project foundations.",
+            title: "15+ Public Repositories & Active Open-Source Contributor",
+            subtitle: "Open-Source Pull Requests & Real-World Contributions",
+            description: "Actively authored Pull Requests across open-source ecosystems (including ConvoBrains Zero-Cost CRM, Corsair Agent Integration Layer, and MRU QA Portal), maintaining 15+ public repositories with modular full-stack architecture.",
             icon: <GitCommit size={22} />,
             tag: "Open Source"
         },

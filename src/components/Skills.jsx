@@ -133,14 +133,25 @@ const Skills = () => {
         },
         {
             id: 'c-lang',
-            name: "C & Java",
+            name: "Java, JSP & Servlets",
             category: "Languages",
             icon: <Terminal size={24} />,
-            usage: "Systems programming, Data Structures, OOP, and Algorithm fundamentals.",
-            howIUse: "Solving algorithmic problems, implementing data structures, and building robust object-oriented software.",
-            projects: ["MongoDB Java Path", "University CS Core"],
-            role: "Core Engineering",
-            badges: ["OOP", "Data Structures"]
+            usage: "Enterprise Java web architecture, MVC pattern, Servlets, and JSP.",
+            howIUse: "Architecting backend applications with Maven, Tomcat, session management, and database DAO patterns.",
+            projects: ["Subscription Management System", "MongoDB Java Path"],
+            role: "Backend & Systems",
+            badges: ["Java Enterprise", "MVC"]
+        },
+        {
+            id: 'python-ds',
+            name: "Python & Data Science",
+            category: "Languages",
+            icon: <Code2 size={24} />,
+            usage: "Machine Learning workflows, model evaluation, and exploratory data analysis.",
+            howIUse: "Building Jupyter Notebook models for classification and predictive analytics, including Credit Card Fraud Detection.",
+            projects: ["Credit Card Fraud Detection", "Machine Learning Labs"],
+            role: "Data Science Specialization",
+            badges: ["ML Labs", "Jupyter"]
         },
         {
             id: 'mysql',
@@ -192,14 +203,14 @@ const Skills = () => {
         },
         {
             id: 'git-expert',
-            name: "Git, GitHub & VS Code",
+            name: "Git, GitHub & PR Workflows",
             category: "Tools",
             icon: <Workflow size={24} />,
-            usage: "Distributed version control and primary development environment.",
-            howIUse: "Maintaining 9+ public repositories with 118+ commits, branching, and automated CI/CD workflows.",
-            projects: ["GitHub Profile Analyzer", "ElevateHire", "My True Companion"],
-            role: "Source Integrity Management",
-            badges: ["118+ Commits", "CI/CD Badge"]
+            usage: "Distributed version control, Pull Requests, and open-source collaboration.",
+            howIUse: "Maintaining 15+ public repositories, submitting Pull Requests to open-source codebases, and managing CI/CD workflows.",
+            projects: ["Zero-Cost CRM", "ElevateHire", "Subscription Management System"],
+            role: "Source Integrity & Open Source",
+            badges: ["15+ Repos", "Open-Source PRs"]
         }
     ];
 

@@ -115,6 +115,49 @@ function handleDirection(newDir) {
   if (isOpposite) return; // Prevent 180-degree turn
   velocity = newDir;
 }`
+        },
+        {
+            id: "subscription",
+            title: "Subscription Management System",
+            repo: "vishwasahuja62-maker/Subscription-Management-System",
+            problem: "Managing recurring SaaS billing and client subscriptions requires strict transactional integrity and modular backend routing.",
+            challenge: "Engineered a full-fledged enterprise Java web application with Maven, Servlets, and JSP. Designed modular MVC architecture managing subscription tiers, billing renewal schedules, and client lifecycle state transitions.",
+            thoughtProcess: "Emphasized Java enterprise standards with robust servlet session management, clean separation between view (JSP/CSS) and controllers, and planned relational database mapping.",
+            techStack: "Java, Servlets, JSP, Maven, Apache Tomcat, CSS3, JavaScript",
+            outcome: "Production-ready Java MVC architecture for subscription lifecycle tracking with extensible database hooks.",
+            lighthouse: { perf: 97, access: 96, best: 98, seo: 95 },
+            github: "https://github.com/vishwasahuja62-maker/Subscription-Management-System",
+            link: "#",
+            snippet: `// Servlet Subscription Filter & Controller
+@WebServlet("/subscriptions")
+public class SubscriptionServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) 
+        throws ServletException, IOException {
+        List<Subscription> activeList = subscriptionService.getActive();
+        req.setAttribute("subscriptions", activeList);
+        req.getRequestDispatcher("/views/dashboard.jsp").forward(req, resp);
+    }
+}`
+        },
+        {
+            id: "zerocostcrm",
+            title: "Zero-Cost CRM – Open Source Contribution",
+            repo: "vishwasahuja62-maker/zero-cost-crm",
+            problem: "Small sales teams need a lightweight, self-hosted CRM for lead follow-ups, pipeline management, and audit tracking without high subscription costs.",
+            challenge: "Contributed to the open-source ConvoBrains ecosystem by implementing activity audit logging export features (CSV/JSON), follow-up suggestion workflows, and pre-commit development hooks.",
+            thoughtProcess: "Analyzed existing repository architecture, engineered clean feature branches with automated formatting, and submitted Pull Requests aligning with community coding standards.",
+            techStack: "TypeScript, React, Node.js, Open Source PRs, Git",
+            outcome: "Authored Pull Requests for audit logs and follow-up engines with merged community improvements.",
+            lighthouse: { perf: 98, access: 98, best: 100, seo: 98 },
+            github: "https://github.com/ConvoBrains/zero-cost-crm/pull/138",
+            link: "https://github.com/ConvoBrains/zero-cost-crm#readme",
+            snippet: `// Activity Audit Log Exporter
+export function exportAuditLog(activities, format) {
+  if (format === 'json') return JSON.stringify(activities, null, 2);
+  const headers = ['Timestamp', 'User', 'Action', 'Entity', 'Details'];
+  const rows = activities.map(a => [a.createdAt, a.author, a.action, a.target, a.note]);
+  return [headers, ...rows].map(r => r.join(',')).join('\\n');
+}`
         }
     ];
 
