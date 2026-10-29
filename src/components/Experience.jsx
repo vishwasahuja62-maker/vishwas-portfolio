@@ -7,10 +7,10 @@ const Experience = () => {
         {
             role: "Salesforce Developer & CRM Intern",
             company: "Astrea IT Services",
-            period: "January 2026 – February 2026",
+            period: "June 2026 – July 2026",
             location: "Noida / Hybrid",
             points: [
-                "Engineered a centralized, enterprise Student Placement Management System on Salesforce CRM replacing fragmented spreadsheet workflows.",
+                "Engineered a centralized, enterprise Student Placement Management System directly on Salesforce CRM (Cloud Org) replacing fragmented spreadsheet workflows.",
                 "Developed modular, reactive UI interfaces using Lightning Web Components (LWC) and integrated backend business logic with Apex controllers.",
                 "Automated end-to-end recruitment lifecycle pipelines (Applications, Eligibility, Interview Scheduling, Offer Letter generation) using Salesforce Flows and Validation Rules.",
                 "Architected a custom data model with Custom Objects, Record Types (On-Campus, Off-Campus, Internship), and Role-Based Access Control (RBAC).",

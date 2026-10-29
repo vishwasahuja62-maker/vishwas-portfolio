@@ -16,14 +16,15 @@ const Projects = () => {
         {
             id: "salesforce-crm",
             title: "Student Placement Management System – Salesforce CRM",
-            repo: "vishwasahuja62-maker",
+            repo: null,
+            badge: "Cloud CRM Hosted",
             problem: "University campus placements suffer from chaotic spreadsheet tracking, missing access governance, and lack of real-time application visibility across students and recruiters.",
-            challenge: "Architected and delivered an enterprise cloud solution on Salesforce CRM featuring a 3-tier architecture. Built dynamic interfaces with Lightning Web Components (LWC), custom Apex controllers for eligibility validation, and record-triggered Salesforce Flows for instant status automation.",
-            thoughtProcess: "Modeled relational custom objects with Master-Detail relationships, Record Types (On-Campus, Off-Campus, Internship), and granular profile permissions. Deployed real-time executive analytics dashboards for university placement directors.",
+            challenge: "Architected and delivered an enterprise cloud solution running directly on Salesforce CRM featuring a 3-tier cloud architecture. Built dynamic interfaces with Lightning Web Components (LWC), custom Apex controllers for eligibility validation, and record-triggered Salesforce Flows for instant status automation.",
+            thoughtProcess: "Modeled relational custom objects with Master-Detail relationships, Record Types (On-Campus, Off-Campus, Internship), and granular profile permissions. Deployed real-time executive analytics dashboards directly inside the Salesforce Lightning interface for university placement directors.",
             techStack: "Salesforce CRM, Lightning Web Components (LWC), Apex, Salesforce Flows, SOQL, SFDX CLI",
-            outcome: "Automated end-to-end recruitment tracking, cut application processing overhead by 60%, and delivered real-time executive KPI dashboards.",
+            outcome: "Automated end-to-end recruitment tracking directly on Salesforce CRM, cut application processing overhead by 60%, and delivered real-time executive KPI dashboards.",
             lighthouse: { perf: 99, access: 98, best: 100, seo: 96 },
-            github: "https://github.com/vishwasahuja62-maker",
+            github: null,
             link: "#",
             snippet: `// Apex Controller: Dynamic Placement Application Filter
 public with sharing class PlacementController {
@@ -313,8 +314,12 @@ export function exportAuditLog(activities, format) {
                                         </div>
                                     </div>
                                     <div className="project-links">
-                                        <a href={project.github} className="icon-link" title="Source Code" target="_blank" rel="noreferrer"><Github size={20} /></a>
-                                        {project.id !== "analyzer" && project.link !== "#" && (
+                                        {project.github ? (
+                                            <a href={project.github} className="icon-link" title="Source Code" target="_blank" rel="noreferrer"><Github size={20} /></a>
+                                        ) : (
+                                            <span className="cloud-crm-tag" title="Deployed on Salesforce Cloud CRM">Salesforce Cloud</span>
+                                        )}
+                                        {project.id !== "analyzer" && project.link && project.link !== "#" && (
                                             <a href={project.link} className="icon-link" title="Live Demo" target="_blank" rel="noreferrer"><ExternalLink size={20} /></a>
                                         )}
                                     </div>
@@ -397,8 +402,12 @@ export function exportAuditLog(activities, format) {
                                                     </div>
                                                 </div>
                                                 <div className="project-links">
-                                                    <a href={expandedProject.github} className="icon-link" title="Source Code" target="_blank" rel="noreferrer"><Github size={20} /></a>
-                                                    {expandedProject.id !== "analyzer" && expandedProject.link !== "#" && (
+                                                    {expandedProject.github ? (
+                                                        <a href={expandedProject.github} className="icon-link" title="Source Code" target="_blank" rel="noreferrer"><Github size={20} /></a>
+                                                    ) : (
+                                                        <span className="cloud-crm-tag" title="Deployed on Salesforce Cloud CRM">Salesforce Cloud</span>
+                                                    )}
+                                                    {expandedProject.id !== "analyzer" && expandedProject.link && expandedProject.link !== "#" && (
                                                         <a href={expandedProject.link} className="icon-link" title="Live Demo" target="_blank" rel="noreferrer"><ExternalLink size={20} /></a>
                                                     )}
                                                 </div>
