@@ -3,7 +3,9 @@ import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Terminal, Database, CloudLightning, Server, ChevronRight } from 'lucide-react';
+import { Terminal, Database, CloudLightning, Server, ChevronRight, Eye } from 'lucide-react';
+import Typewriter from './Typewriter';
+import VisitorCounter from './VisitorCounter';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -12,6 +14,14 @@ const Hero = ({ onNavigate }) => {
     const heroRef = useRef(null);
     const techPanelRef = useRef(null);
     const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth <= 900 : false);
+
+    const typewriterPhrases = [
+        "I build full-stack React & Supabase platforms.",
+        "I architect enterprise Salesforce CRM solutions.",
+        "I integrate real AI & LLM reasoning pipelines.",
+        "I author and merge open-source pull requests.",
+        "I engineer scalable Java MVC architectures."
+    ];
 
     useEffect(() => {
         const checkMobile = () => {
@@ -24,7 +34,6 @@ const Hero = ({ onNavigate }) => {
     }, []);
 
     useEffect(() => {
-        // Skip parallax on mobile devices for performance
         if (isMobile) return;
 
         const handleMouseMove = (e) => {
@@ -43,7 +52,6 @@ const Hero = ({ onNavigate }) => {
             defaults: { ease: "expo.out", duration: 1.2 }
         });
 
-        // High-Impact Entrance sequence using FROM for better reliability
         const title = document.querySelector('.hero-title');
         if (title) {
             title.classList.add('glitch-title');
@@ -59,6 +67,11 @@ const Hero = ({ onNavigate }) => {
             duration: 1.5,
             ease: "power4.out"
         })
+            .from(".hero-typewriter-box", {
+                opacity: 0,
+                y: 15,
+                duration: 0.8
+            }, "-=1.2")
             .from(".hero-subtitle", {
                 opacity: 0,
                 y: 20,
@@ -77,9 +90,7 @@ const Hero = ({ onNavigate }) => {
                 duration: 0.8
             }, "-=1.8");
 
-        // Only run heavy cinematic animations on desktop
         if (!isMobile) {
-            // Tech Panel - Cinematic Build-Up
             const panelTl = gsap.timeline({
                 scrollTrigger: {
                     trigger: ".tech-panel",
@@ -99,59 +110,26 @@ const Hero = ({ onNavigate }) => {
             })
                 .from(".arch-layer", {
                     opacity: 0,
-                    x: 40,
-                    stagger: 0.25,
-                    duration: 1,
-                    ease: "back.out(1.7)"
-                }, "-=1.2")
-                .from(".connection-line", {
-                    scaleY: 0,
-                    opacity: 0,
-                    transformOrigin: "top",
-                    stagger: 0.35,
-                    duration: 1.5,
-                    ease: "expo.inOut"
-                }, "-=1.5")
-                .from(".system-status .status-text", {
-                    opacity: 0,
-                    x: -15,
+                    x: 30,
                     stagger: 0.15,
-                    duration: 0.6
+                    duration: 0.8,
+                    ease: "power2.out"
+                }, "-=1.2")
+                .from(".signal-wire", {
+                    scaleY: 0,
+                    stagger: 0.1,
+                    duration: 0.6,
+                    transformOrigin: "top"
                 }, "-=0.8");
 
-            // Background Parallax
-            if (heroRef.current) {
-                gsap.to(".hud-grid", {
-                    yPercent: 20,
-                    ease: "none",
-                    scrollTrigger: {
-                        trigger: heroRef.current,
-                        start: "top top",
-                        end: "bottom top",
-                        scrub: true
-                    }
-                });
-            }
-
-            gsap.to(".hud-circles", {
-                rotate: 360,
-                duration: 50,
-                repeat: -1,
-                ease: "none"
-            });
-
-            // Floating animation for tech panel (desktop only)
             gsap.to(".tech-panel", {
-                y: -30,
-                rotateZ: 1,
-                rotateX: 2,
-                duration: 4,
+                y: -10,
+                duration: 3,
                 ease: "sine.inOut",
                 repeat: -1,
                 yoyo: true
             });
         } else {
-            // Mobile: simple fade-in for tech panel
             gsap.from(".tech-panel", {
                 opacity: 0,
                 y: 30,
@@ -180,7 +158,6 @@ const Hero = ({ onNavigate }) => {
 
     return (
         <section id="hero" className="hero-section perspective-1000" ref={heroRef}>
-            {/* Next-Level Background HUD */}
             <div className="hud-background">
                 <div className="hud-grid"></div>
                 <div className="hud-circles"></div>
@@ -188,16 +165,17 @@ const Hero = ({ onNavigate }) => {
             </div>
 
             <div className="container hero-container">
-
-                {/* Left Column */}
                 <div
                     className="hero-left"
                     style={!isMobile ? {
                         transform: `translate(${mousePosition.x * 0.01}px, ${mousePosition.y * 0.01}px)`
                     } : undefined}
                 >
-                    <div className="status-badge pulse-badge">
-                        <span className="pulse-dot active"></span> Solving Real-World Engineering Problems
+                    <div className="hero-top-badges">
+                        <div className="status-badge pulse-badge">
+                            <span className="pulse-dot active"></span> Solving Real-World Engineering Problems
+                        </div>
+                        <VisitorCounter />
                     </div>
 
                     <h1 className="hero-title">
@@ -208,6 +186,12 @@ const Hero = ({ onNavigate }) => {
                             <span className="hero-title-inner">I <span className="highlight">build and ship</span> with it.</span>
                         </span>
                     </h1>
+
+                    {/* Dynamic Rotating Typewriter Widget */}
+                    <div className="hero-typewriter-box glass">
+                        <span className="typewriter-prefix">&gt;</span>
+                        <Typewriter phrases={typewriterPhrases} />
+                    </div>
 
                     <p className="hero-subtitle">
                         BTech CSE (Data Science) student building full-stack <strong className="neon-text">React</strong> apps, integrating <strong className="neon-text">real AI</strong> APIs, and deploying <strong className="neon-text">live</strong> — while most are still watching tutorials.
@@ -229,78 +213,56 @@ const Hero = ({ onNavigate }) => {
                     </div>
                 </div>
 
-                {/* Right Column (Technical Panel) */}
-                <div
-                    className="hero-right"
-                    style={!isMobile ? {
-                        transform: `translate(${mousePosition.x * -0.015}px, ${mousePosition.y * -0.015}px)`
-                    } : undefined}
-                >
-                    <div className="tech-panel glass" ref={techPanelRef}>
-                        <div className="panel-header">
-                            <span className="dot red"></span>
-                            <span className="dot yellow"></span>
-                            <span className="dot green"></span>
-                            <span className="panel-title">System Architecture (v2.1)</span>
+                {/* Right Column: Architectural Stack HUD */}
+                <div className="hero-right">
+                    <div className="tech-panel glass hud-border" ref={techPanelRef}>
+                        <div className="panel-hud-header">
+                            <span className="hud-label">SYSTEM_ARCHITECTURE // LIVE</span>
+                            <div className="hud-indicators">
+                                <span className="indicator-dot active"></span>
+                                <span className="indicator-dot"></span>
+                                <span className="indicator-dot"></span>
+                            </div>
                         </div>
 
-                        <div className="panel-body">
+                        <div className="arch-layers">
                             <div className="arch-layer">
-                                <Terminal className="layer-icon" size={20} />
-                                <div className="layer-info">
-                                    <div className="layer-name">UI Ecosystem</div>
-                                    <div className="layer-tech">React 18 • GSAP • Framer</div>
+                                <div className="layer-icon"><Terminal size={18} /></div>
+                                <div className="layer-content">
+                                    <span className="layer-tag">PRESENTATION LAYER</span>
+                                    <h4>Modern Reactive UI</h4>
+                                    <p>React 18, GSAP & Framer Motion, Tailwind</p>
                                 </div>
-                                <div className="pulse-dot active"></div>
+                                <div className="layer-status optimal">OPTIMAL</div>
                             </div>
 
-                            <div className="connection-line"></div>
+                            <div className="signal-wire"></div>
 
-                            <div className="arch-layer highlight-ai">
-                                <Server className="layer-icon" size={20} />
-                                <div className="layer-info">
-                                    <div className="layer-name">AI Logic Hub</div>
-                                    <div className="layer-tech">Llama-3 • Groq Inference</div>
+                            <div className="arch-layer">
+                                <div className="layer-icon"><CloudLightning size={18} /></div>
+                                <div className="layer-content">
+                                    <span className="layer-tag">LOGIC & INTEGRATION LAYER</span>
+                                    <h4>Full-Stack & Cloud CRM</h4>
+                                    <p>Node.js, Express, Salesforce Apex & LWC</p>
                                 </div>
-                                <div className="pulse-dot ai"></div>
+                                <div className="layer-status active">ACTIVE</div>
                             </div>
 
-                            <div className="connection-line ai-line"></div>
+                            <div className="signal-wire"></div>
 
-                            <div className="arch-layer highlighted">
-                                <CloudLightning className="layer-icon" size={20} />
-                                <div className="layer-info">
-                                    <div className="layer-name">Edge Delivery</div>
-                                    <div className="layer-tech">Kuberns AI Auto-Deploy</div>
+                            <div className="arch-layer">
+                                <div className="layer-icon"><Database size={18} /></div>
+                                <div className="layer-content">
+                                    <span className="layer-tag">PERSISTENCE LAYER</span>
+                                    <h4>Cloud Databases & Sockets</h4>
+                                    <p>PostgreSQL, Supabase Real-Time, MongoDB</p>
                                 </div>
-                                <div className="pulse-dot deploy"></div>
-                            </div>
-
-                            <div className="system-status">
-                                <span className="status-text">State: <strong className="success-text">OPERATIONAL</strong></span>
-                                <span className="status-text">Env: <strong>PROD</strong></span>
-                                <span className="status-text">Uptime: <strong>99.99%</strong></span>
+                                <div className="layer-status synced">SYNCED</div>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
-
-
-
-
-            <motion.div
-                className="proof-strip"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
-            >
-                <div className="proof-item"><span className="proof-icon">⚡</span> Full-Stack Dev</div>
-                <div className="proof-item"><span className="proof-icon">🤖</span> AI Integration</div>
-                <div className="proof-item"><span className="proof-icon">🎯</span> Performance Focused</div>
-                <div className="proof-item"><span className="proof-icon">🏗️</span> Scalable Architecture</div>
-            </motion.div>
         </section>
     );
 };

@@ -1,43 +1,54 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Github, Linkedin, ArrowUpRight, Globe, Phone } from 'lucide-react';
+import { 
+    Mail, 
+    Github, 
+    Linkedin, 
+    ArrowUpRight, 
+    Globe, 
+    Phone, 
+    Calendar,
+    Send
+} from 'lucide-react';
+import ContactForm from './ContactForm';
+import CalendlyAndSocialHub from './CalendlyAndSocialHub';
 
 const Contact = () => {
     const links = [
         {
             icon: <Mail size={22} />,
-            label: "Email",
+            label: "Primary Email",
             value: "vishwasahuja62@gmail.com",
             href: "mailto:vishwasahuja62@gmail.com",
-            color: "#f59e0b"
+            color: "#06b6d4"
         },
         {
             icon: <Mail size={22} />,
             label: "University Email",
             value: "vishwas_ahuja24@mru.ac.in",
             href: "mailto:vishwas_ahuja24@mru.ac.in",
-            color: "#06b6d4"
+            color: "#3b82f6"
         },
         {
             icon: <Phone size={22} />,
-            label: "Phone",
+            label: "Phone Contact",
             value: "+91-8882449462",
             href: "tel:+918882449462",
             color: "#10b981"
         },
         {
             icon: <Github size={22} />,
-            label: "GitHub",
+            label: "GitHub Profile",
             value: "vishwasahuja62-maker",
             href: "https://github.com/vishwasahuja62-maker",
             color: "#f8fafc"
         },
         {
             icon: <Linkedin size={22} />,
-            label: "LinkedIn",
+            label: "LinkedIn Network",
             value: "vishwas-ahuja-6b5225327",
             href: "https://www.linkedin.com/in/vishwas-ahuja-6b5225327",
-            color: "#3b82f6"
+            color: "#38bdf8"
         },
         {
             icon: <Globe size={22} />,
@@ -49,7 +60,7 @@ const Contact = () => {
     ];
 
     return (
-        <section id="contact" className="section-padding">
+        <section id="contact" className="section-padding contact-page-section">
             <div className="container">
                 <motion.div
                     className="contact-hero"
@@ -63,10 +74,36 @@ const Contact = () => {
                         Let's build something <span className="highlight">great together</span>.
                     </h2>
                     <p className="contact-desc">
-                        BTech CSE (Data Science) student open to internships, freelance gigs, and open-source collabs.
-                        If my work excites you — let's talk.
+                        BTech CSE (Data Science) student open to internships, software engineering roles, and open-source collaborations.
+                        Drop a message or schedule a call.
                     </p>
                 </motion.div>
+
+                {/* Dual Column: Working Contact Form + Calendly / Social Links Hub */}
+                <div className="contact-dual-column">
+                    <motion.div
+                        initial={{ opacity: 0, x: -25 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        <ContactForm />
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, x: 25 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        <CalendlyAndSocialHub />
+                    </motion.div>
+                </div>
+
+                {/* Legacy Quick Cards Grid */}
+                <div className="contact-secondary-header">
+                    <span className="section-eyebrow">Direct Contact Endpoints</span>
+                </div>
 
                 <div className="contact-cards-grid">
                     {links.map((link, idx) => (
@@ -76,10 +113,10 @@ const Contact = () => {
                             target={link.href.startsWith('mailto') ? '_self' : '_blank'}
                             rel="noreferrer"
                             className="contact-card glass"
-                            initial={{ opacity: 0, y: 30 }}
+                            initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            transition={{ duration: 0.5, delay: idx * 0.12 }}
+                            transition={{ duration: 0.5, delay: idx * 0.08 }}
                             whileHover={{ y: -6, borderColor: 'rgba(6, 182, 212, 0.4)' }}
                         >
                             <div className="contact-card-icon" style={{ color: link.color }}>
@@ -99,12 +136,9 @@ const Contact = () => {
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.4 }}
+                    transition={{ duration: 0.6, delay: 0.3 }}
                 >
-                    <div className="proof-badge glass">
-                        <span className="blob"></span>
-                        All projects are real, self-built, and deployed. Source code available on GitHub.
-                    </div>
+                    <p>Designed with deep space aesthetics. Always responsive to genuine technical inquiries.</p>
                 </motion.div>
             </div>
         </section>

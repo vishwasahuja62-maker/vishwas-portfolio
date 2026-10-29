@@ -1,6 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Hero from './Hero';
+import TechMarquee from './TechMarquee';
+import FeaturedSpotlight from './FeaturedSpotlight';
+import Timeline from './Timeline';
+import GithubHeatmap from './GithubHeatmap';
+import CurrentlyLearning from './CurrentlyLearning';
 import AiFeatures from './AiFeatures';
 import {
     Briefcase,
@@ -11,10 +16,12 @@ import {
     Mail,
     ArrowRight,
     Star,
-    Sparkles
+    Sparkles,
+    Calendar,
+    GitBranch
 } from 'lucide-react';
 
-const Home = ({ onNavigate }) => {
+const Home = ({ onNavigate, onPreview }) => {
     const hubCards = [
         {
             id: 'projects',
@@ -56,7 +63,7 @@ const Home = ({ onNavigate }) => {
             id: 'achievements',
             title: 'Achievements & Certifications',
             subtitle: 'Honors & Verified Badges',
-            desc: 'Dean’s & VC List honors, 118+ GitHub commits, Google Cloud, MongoDB, & Deloitte credentials.',
+            desc: 'Dean\'s & VC List honors, 2 Merged Open-Source PRs, 15+ Repos, Google Cloud, MongoDB, & Deloitte credentials.',
             icon: <Trophy size={24} />,
             badge: 'Honors',
             color: 'amber'
@@ -74,10 +81,25 @@ const Home = ({ onNavigate }) => {
 
     return (
         <div className="home-page-view">
-            {/* Original Cinematic Hero */}
+            {/* 1. Cinematic Hero with Dynamic Typewriter & Visitor Counter */}
             <Hero onNavigate={onNavigate} />
 
-            {/* Hub Directory Section */}
+            {/* 2. Tech Stack Logos Infinite Marquee */}
+            <TechMarquee />
+
+            {/* 3. Featured Flagship Project Spotlight with Live Simulator Link */}
+            <FeaturedSpotlight onNavigate={onNavigate} onPreview={onPreview} />
+
+            {/* 4. Milestone Trajectory Timeline (School -> College -> Internships -> OSS) */}
+            <Timeline onNavigate={onNavigate} />
+
+            {/* 5. Real-Time GitHub Contribution Stream & Heatmap */}
+            <GithubHeatmap />
+
+            {/* 6. What I'm Currently Learning Widget (Next.js, DSA, System Design) */}
+            <CurrentlyLearning />
+
+            {/* 7. Hub Directory Section */}
             <section className="section-padding hub-section">
                 <div className="container">
                     <div className="section-header-compact center text-center">
@@ -125,10 +147,10 @@ const Home = ({ onNavigate }) => {
                 </div>
             </section>
 
-            {/* AI Foundation Highlights */}
+            {/* 8. AI Foundation Highlights */}
             <AiFeatures />
 
-            {/* Quick Contact Banner */}
+            {/* 9. Quick Contact Banner */}
             <section className="section-padding contact-banner-section">
                 <div className="container">
                     <div className="contact-banner glass">
@@ -152,4 +174,3 @@ const Home = ({ onNavigate }) => {
 };
 
 export default Home;
-

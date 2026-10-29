@@ -14,6 +14,8 @@ import Background from './components/Background';
 import CustomCursor from './components/CustomCursor';
 import CommandPalette from './components/CommandPalette';
 import SystemLogs from './components/SystemLogs';
+import PageProgressBar from './components/PageProgressBar';
+import LivePreviewModal from './components/LivePreviewModal';
 import { ArrowLeft } from 'lucide-react';
 
 function App() {
@@ -22,6 +24,29 @@ function App() {
     });
     const [currentPage, setCurrentPage] = useState('home');
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+    // Live preview interactive modal state
+    const [previewState, setPreviewState] = useState({
+        isOpen: false,
+        url: '',
+        title: ''
+    });
+
+    const openPreview = (url, title) => {
+        setPreviewState({
+            isOpen: true,
+            url,
+            title
+        });
+    };
+
+    const closePreview = () => {
+        setPreviewState({
+            isOpen: false,
+            url: '',
+            title: ''
+        });
+    };
 
     const handlePreloaderComplete = () => {
         sessionStorage.setItem('portfolio_preloader_seen', 'true');
@@ -34,15 +59,15 @@ function App() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    // Lock body scroll when mobile menu is open
+    // Lock body scroll when mobile menu or preview modal is open
     useEffect(() => {
-        if (mobileMenuOpen) {
+        if (mobileMenuOpen || previewState.isOpen) {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = '';
         }
         return () => { document.body.style.overflow = ''; };
-    }, [mobileMenuOpen]);
+    }, [mobileMenuOpen, previewState.isOpen]);
 
     // UI Tick sound
     const playTick = () => {
@@ -63,7 +88,7 @@ function App() {
 
     useEffect(() => {
         const handleInteraction = (e) => {
-            if (e.target.closest('a, button, .command-item, .contact-card, .hub-card, .nav-island-btn')) {
+            if (e.target.closest('a, button, .command-item, .contact-card, .hub-card, .nav-island-btn, .filter-btn, .year-tab')) {
                 playTick();
             }
         };
@@ -74,7 +99,7 @@ function App() {
     const renderPageContent = () => {
         switch (currentPage) {
             case 'projects':
-                return <Projects />;
+                return <Projects onPreview={openPreview} />;
             case 'experience':
                 return <Experience />;
             case 'skills':
@@ -89,7 +114,7 @@ function App() {
                 return <Contact />;
             case 'home':
             default:
-                return <Home onNavigate={navigateTo} />;
+                return <Home onNavigate={navigateTo} onPreview={openPreview} />;
         }
     };
 
@@ -100,6 +125,9 @@ function App() {
                 <Preloader onComplete={handlePreloaderComplete} />
             ) : (
                 <>
+                    {/* Continuous Page Scroll Progress Indicator Bar */}
+                    <PageProgressBar />
+
                     <Background />
                     <CommandPalette onNavigate={navigateTo} />
                     <SystemLogs />
@@ -110,6 +138,14 @@ function App() {
                         onNavigate={navigateTo}
                         mobileMenuOpen={mobileMenuOpen}
                         setMobileMenuOpen={setMobileMenuOpen}
+                    />
+
+                    {/* Live Preview Interactive Sandbox Modal */}
+                    <LivePreviewModal 
+                        isOpen={previewState.isOpen}
+                        url={previewState.url}
+                        title={previewState.title}
+                        onClose={closePreview}
                     />
 
                     <main className="main-content-reveal">

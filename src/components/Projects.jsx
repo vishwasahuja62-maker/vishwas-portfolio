@@ -3,21 +3,45 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Github, ExternalLink, Star, GitFork, ArrowLeft, ArrowRight } from 'lucide-react';
+import { 
+    Github, 
+    ExternalLink, 
+    Star, 
+    GitFork, 
+    ArrowLeft, 
+    ArrowRight, 
+    Zap, 
+    Layers, 
+    Clock, 
+    CheckCircle2, 
+    SlidersHorizontal 
+} from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const Projects = () => {
+const Projects = ({ onPreview }) => {
     const [stats, setStats] = useState({});
     const [expandedProject, setExpandedProject] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState('all');
     const projectsRef = useRef(null);
+
+    const categories = [
+        { id: 'all', label: 'All Projects (7)' },
+        { id: 'fullstack', label: 'Full Stack & Web' },
+        { id: 'cloud', label: 'Salesforce CRM' },
+        { id: 'java', label: 'Java & Systems' },
+        { id: 'ai', label: 'AI & Tools' },
+        { id: 'oss', label: 'Open Source' }
+    ];
 
     const cases = [
         {
             id: "salesforce-crm",
             title: "Student Placement Management System – Salesforce CRM",
+            category: "cloud",
             repo: null,
             badge: "Cloud CRM Hosted",
+            isWip: false,
             problem: "University campus placements suffer from chaotic spreadsheet tracking, missing access governance, and lack of real-time application visibility across students and recruiters.",
             challenge: "Architected and delivered an enterprise cloud solution running directly on Salesforce CRM featuring a 3-tier cloud architecture. Built dynamic interfaces with Lightning Web Components (LWC), custom Apex controllers for eligibility validation, and record-triggered Salesforce Flows for instant status automation.",
             thoughtProcess: "Modeled relational custom objects with Master-Detail relationships, Record Types (On-Campus, Off-Campus, Internship), and granular profile permissions. Deployed real-time executive analytics dashboards directly inside the Salesforce Lightning interface for university placement directors.",
@@ -26,6 +50,7 @@ const Projects = () => {
             lighthouse: { perf: 99, access: 98, best: 100, seo: 96 },
             github: null,
             link: "#",
+            previewUrl: null,
             snippet: `// Apex Controller: Dynamic Placement Application Filter
 public with sharing class PlacementController {
     @AuraEnabled(cacheable=true)
@@ -43,7 +68,9 @@ public with sharing class PlacementController {
         {
             id: "elevatehire",
             title: "ElevateHire – Full Stack Recruitment Platform",
+            category: "fullstack",
             repo: "vishwasahuja62-maker/ElevateHire",
+            isWip: false,
             problem: "Recruiters and job seekers lack an integrated, transparent hiring lifecycle that manages everything from applications to real-time interviews in one hub.",
             challenge: "Engineered a dual-dashboard full-stack recruitment architecture with Role-Based Access Control (RBAC), JWT authentication, and a real-time messaging pipeline powered by Socket.IO. Developed a fluid Kanban-based Applicant Tracking System (ATS), interview scheduler, and hiring analytics visualization.",
             thoughtProcess: "Implemented secure cloud database integration with PostgreSQL (Supabase) and structured REST APIs with Docker-ready modular architecture adhering to enterprise software engineering standards.",
@@ -52,6 +79,7 @@ public with sharing class PlacementController {
             lighthouse: { perf: 98, access: 100, best: 98, seo: 100 },
             github: "https://github.com/vishwasahuja62-maker",
             link: "#",
+            previewUrl: null,
             snippet: `// Real-Time Socket.IO Pipeline & JWT Auth
 io.use((socket, next) => {
   const token = socket.handshake.auth.token;
@@ -63,9 +91,34 @@ io.use((socket, next) => {
 });`
         },
         {
+            id: "kanban",
+            title: "Supabase Kanban Board",
+            category: "fullstack",
+            repo: "vishwasahuja62-maker/Kanban-Board",
+            isWip: false,
+            problem: "Task management tools often suffer from state drift and lack real-time synchronization across multiple client instances.",
+            challenge: "Implementing real-time optimistic updates for drag-and-drop actions. I leveraged Supabase's PostgreSQL real-time engine to ensure that any change in the 'To-Do', 'In-Progress', or 'Done' stacks is instantly reflected across all active sessions.",
+            thoughtProcess: "Focused on a 'Reactive State' model using Supabase's subscription model. Implemented Row-Level Security (RLS) to ensure data isolation while maintaining a high-performance, low-latency UI.",
+            techStack: "React 18, TailwindCSS, Supabase Auth/DB, Lucide",
+            outcome: "Zero state-drift observed during concurrent edits. Achieved seamless real-time persistence with sub-100ms sync latency.",
+            lighthouse: { perf: 99, access: 98, best: 100, seo: 100 },
+            github: "https://github.com/vishwasahuja62-maker/Kanban-Board",
+            link: "https://kanban-elite-task-manager.netlify.app/",
+            previewUrl: "https://kanban-elite-task-manager.netlify.app/",
+            snippet: `// Real-time Sync (Supabase Channel)
+const syncTasks = (projectId) => {
+  supabase.channel('project_tasks')
+    .on('postgres_changes', { event: '*', schema: 'public' }, (payload) => {
+      setTasks(current => reconcileState(current, payload));
+    }).subscribe();
+};`
+        },
+        {
             id: "mytruecompanion",
             title: "My True Companion – AI-Powered Learning Platform",
+            category: "ai",
             repo: "vishwasahuja62-maker/My-True-Companion",
+            isWip: false,
             problem: "Students struggle with generic study material and lack personalized, on-demand AI guidance for conceptual doubt resolution.",
             challenge: "Designed and deployed an AI-assisted educational system featuring intelligent doubt resolution, personalized progress tracking, and student dashboards. Focused on sub-500ms response streaming and seamless user onboarding.",
             thoughtProcess: "Integrated LLM reasoning workflows with Supabase authentication and PostgreSQL cloud storage to persist learning milestones. Refined UX iteratively using feedback from 20+ active community users.",
@@ -74,6 +127,7 @@ io.use((socket, next) => {
             lighthouse: { perf: 99, access: 98, best: 100, seo: 100 },
             github: "https://github.com/vishwasahuja62-maker",
             link: "#",
+            previewUrl: null,
             snippet: `// AI Doubt Solving & Stream Handler
 const resolveDoubt = async (userId, prompt) => {
   const context = await getLearnerContext(userId);
@@ -87,15 +141,18 @@ const resolveDoubt = async (userId, prompt) => {
         {
             id: "analyzer",
             title: "GitHub Profile Analyzer",
+            category: "ai",
             repo: "vishwasahuja62-maker/Github-Profile-Analyzer",
+            isWip: true, // Marked as WIP with distinct badge
             problem: "Recruiters and developers need a high-level summary of technical aptitude that raw GitHub profiles fail to provide at a glance.",
             challenge: "Engineering a multi-weighted scoring engine that aggregates data from GitHub's REST API. I developed a backend logic that calculates a 'Developer Score' by weighting Stars (x3), Repos (x2), and Followers (x2), while applying multipliers for account age, organizational loyalty, and recent commit velocity.",
             thoughtProcess: "Built a decoupled architecture with a Node.js/Express backend to handle API rate-limiting and data normalization. Used Chart.js for radar-map visualizations, allowing for multi-dimensional skill assessment.",
             techStack: "React, Node.js, Express, Chart.js, GitHub API",
-            outcome: "Generates a comprehensive 1-1000 technical profile in under 1.5s. Successfully visualizes cross-repo consistency.",
+            outcome: "Under Active Development: Refining API rate-limiting caching layers and multi-metric radar assessment.",
             lighthouse: { perf: 98, access: 100, best: 95, seo: 100 },
             github: "https://github.com/vishwasahuja62-maker/Github-Profile-Analyzer",
             link: "#",
+            previewUrl: null,
             snippet: `// Developer Scoring Engine Logic
 const calculateDeveloperScore = (data) => {
   const baseScore = (data.stars * 3) + (data.repos * 2) + (data.followers * 2);
@@ -105,48 +162,11 @@ const calculateDeveloperScore = (data) => {
 };`
         },
         {
-            id: "kanban",
-            title: "Supabase Kanban Board",
-            repo: "vishwasahuja62-maker/Kanban-Board",
-            problem: "Task management tools often suffer from state drift and lack real-time synchronization across multiple client instances.",
-            challenge: "Implementing real-time optimistic updates for drag-and-drop actions. I leveraged Supabase's PostgreSQL real-time engine to ensure that any change in the 'To-Do', 'In-Progress', or 'Done' stacks is instantly reflected across all active sessions.",
-            thoughtProcess: "Focused on a 'Reactive State' model using Supabase's subscription model. Implemented Row-Level Security (RLS) to ensure data isolation while maintaining a high-performance, low-latency UI.",
-            techStack: "React 18, TailwindCSS, Supabase Auth/DB, Lucide",
-            outcome: "Zero state-drift observed during concurrent edits. Achieved seamless real-time persistence with sub-100ms sync latency.",
-            lighthouse: { perf: 99, access: 98, best: 100, seo: 100 },
-            github: "https://github.com/vishwasahuja62-maker/Kanban-Board",
-            link: "https://kanban-elite-task-manager.netlify.app/",
-            snippet: `// Real-time Sync (Supabase Channel)
-const syncTasks = (projectId) => {
-  supabase.channel('project_tasks')
-    .on('postgres_changes', { event: '*', schema: 'public' }, (payload) => {
-      setTasks(current => reconcileState(current, payload));
-    }).subscribe();
-};`
-        },
-        {
-            id: "snake",
-            title: "Neon Snake PWA",
-            repo: "vishwasahuja62-maker/Snake-Game",
-            problem: "Traditional browser games often lack mobile responsiveness and fail to provide a native-app feel or offline capability.",
-            challenge: "Developing a zero-dependency Progressive Web App (PWA) with a frame-perfect game loop. I engineered a coordinate-based grid system with 'Illegal Turn Protection' (preventing 180-degree self-collisions) and dynamic speed scaling.",
-            thoughtProcess: "Prioritized 'Engineering Elegance' using pure JavaScript for maximum performance. Implemented a Service Worker for offline play and leveraged CSS Grid for a perfectly responsive game board that adapts to any viewport.",
-            techStack: "HTML5, CSS3, JavaScript (ES6+), Service Workers",
-            outcome: "Input lag < 1ms. Full offline support via PWA manifest. Clean, framework-free implementation under 50KB.",
-            lighthouse: { perf: 100, access: 100, best: 100, seo: 100 },
-            github: "https://github.com/vishwasahuja62-maker/Snake-Game",
-            link: "#",
-            snippet: `// Illegal Move & Collision Logic
-function handleDirection(newDir) {
-  const isOpposite = (newDir.x === -velocity.x) || (newDir.y === -velocity.y);
-  if (isOpposite) return; // Prevent 180-degree turn
-  velocity = newDir;
-}`
-        },
-        {
             id: "subscription",
             title: "Subscription Management System",
+            category: "java",
             repo: "vishwasahuja62-maker/Subscription-Management-System",
+            isWip: false,
             problem: "Managing recurring SaaS billing and client subscriptions requires strict transactional integrity and modular backend routing.",
             challenge: "Engineered a full-fledged enterprise Java web application with Maven, Servlets, and JSP. Designed modular MVC architecture managing subscription tiers, billing renewal schedules, and client lifecycle state transitions.",
             thoughtProcess: "Emphasized Java enterprise standards with robust servlet session management, clean separation between view (JSP/CSS) and controllers, and planned relational database mapping.",
@@ -155,6 +175,7 @@ function handleDirection(newDir) {
             lighthouse: { perf: 97, access: 96, best: 98, seo: 95 },
             github: "https://github.com/vishwasahuja62-maker/Subscription-Management-System",
             link: "#",
+            previewUrl: null,
             snippet: `// Servlet Subscription Filter & Controller
 @WebServlet("/subscriptions")
 public class SubscriptionServlet extends HttpServlet {
@@ -169,15 +190,18 @@ public class SubscriptionServlet extends HttpServlet {
         {
             id: "zerocostcrm",
             title: "Zero-Cost CRM – Open Source Contribution",
+            category: "oss",
             repo: "vishwasahuja62-maker/zero-cost-crm",
+            isWip: false,
             problem: "Small sales teams need a lightweight, self-hosted CRM for lead follow-ups, pipeline management, and audit tracking without high subscription costs.",
             challenge: "Contributed to the open-source ConvoBrains ecosystem by implementing activity audit logging export features (CSV/JSON), follow-up suggestion workflows, and pre-commit development hooks.",
             thoughtProcess: "Analyzed existing repository architecture, engineered clean feature branches with automated formatting, and submitted Pull Requests aligning with community coding standards.",
             techStack: "TypeScript, React, Node.js, Open Source PRs, Git",
-            outcome: "Authored Pull Requests for audit logs and follow-up engines with merged community improvements.",
+            outcome: "Authored and merged Pull Request #138 for activity audit logs and follow-up engines with approved production status.",
             lighthouse: { perf: 98, access: 98, best: 100, seo: 98 },
             github: "https://github.com/ConvoBrains/zero-cost-crm/pull/138",
             link: "https://github.com/ConvoBrains/zero-cost-crm#readme",
+            previewUrl: null,
             snippet: `// Activity Audit Log Exporter
 export function exportAuditLog(activities, format) {
   if (format === 'json') return JSON.stringify(activities, null, 2);
@@ -188,10 +212,17 @@ export function exportAuditLog(activities, format) {
         }
     ];
 
+    // Filter projects based on category
+    const filteredCases = cases.filter(item => {
+        if (selectedCategory === 'all') return true;
+        return item.category === selectedCategory;
+    });
+
     useEffect(() => {
         const fetchStats = async () => {
             const data = {};
             for (const p of cases) {
+                if (!p.repo) continue;
                 try {
                     const res = await fetch(`https://api.github.com/repos/${p.repo}`);
                     if (!res.ok) continue;
@@ -216,94 +247,54 @@ export function exportAuditLog(activities, format) {
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
-    useGSAP(() => {
-        // Main staggered card reveal
-        const cases = gsap.utils.toArray(".project-case");
-        if (cases.length > 0) {
-            gsap.from(cases, {
-                scrollTrigger: {
-                    trigger: ".projects-wrapper",
-                    start: "top 75%",
-                    toggleActions: "play none none reverse"
-                },
-                opacity: 0,
-                y: isMobile ? 30 : 50,
-                rotateX: isMobile ? 0 : 10,
-                stagger: 0.2,
-                duration: 1.2,
-                ease: "power4.out",
-                clearProps: "all"
-            });
-        }
-
-        // Detailed internal animations
-        const projectCases = gsap.utils.toArray(".project-case");
-        projectCases.forEach(project => {
-            const title = project.querySelector(".project-title");
-            if (!title) return; // Skip if targets not found (happens in mobile list view)
-
-            const tl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: project,
-                    start: "top 85%"
-                }
-            });
-
-            tl.from(title, {
-                opacity: 0,
-                x: isMobile ? 0 : -20,
-                y: isMobile ? 10 : 0,
-                duration: 0.6
-            });
-
-            const statsItems = project.querySelectorAll(".stat-item");
-            if (statsItems.length) {
-                tl.from(statsItems, {
-                    opacity: 0,
-                    y: 10,
-                    stagger: 0.1,
-                    duration: 0.4
-                }, "-=0.3");
-            }
-
-            const sections = project.querySelectorAll(".project-section");
-            if (sections.length) {
-                tl.from(sections, {
-                    opacity: 0,
-                    y: 20,
-                    stagger: 0.15,
-                    duration: 0.6
-                }, "-=0.2");
-            }
-
-            const tags = project.querySelectorAll(".tech-tag");
-            if (tags.length) {
-                tl.from(tags, {
-                    opacity: 0,
-                    scale: 0.8,
-                    stagger: 0.05,
-                    duration: 0.3
-                }, "-=0.2");
-            }
-        });
-
-    }, { scope: projectsRef, dependencies: [isMobile] });
-
     return (
-        <section id="projects" className="section-padding" ref={projectsRef}>
+        <section id="projects" className="section-padding projects-page-section" ref={projectsRef}>
             <div className="container">
-                <div className="section-header center">
+                <div className="section-header center text-center">
+                    <span className="section-eyebrow">Production Architectures</span>
                     <h2 className="section-title">Case Studies & Flagships</h2>
                     <p className="section-subtitle">Real engineering challenges, documented and deployed.</p>
                 </div>
 
+                {/* Tech Stack Filter Bar */}
+                <div className="project-filter-bar glass">
+                    <div className="filter-label">
+                        <SlidersHorizontal size={14} className="text-cyan" />
+                        <span>Filter By:</span>
+                    </div>
+                    <div className="filter-buttons-list">
+                        {categories.map((cat) => (
+                            <button
+                                key={cat.id}
+                                className={`filter-btn ${selectedCategory === cat.id ? 'active' : ''}`}
+                                onClick={() => setSelectedCategory(cat.id)}
+                            >
+                                {cat.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
                 <div className="projects-wrapper">
                     {!isMobile ? (
-                        cases.map((project, idx) => (
-                            <div className="project-case glass" key={idx}>
+                        filteredCases.map((project, idx) => (
+                            <div className="project-case glass" key={project.id}>
                                 <div className="project-header">
                                     <div className="project-title-area">
-                                        <h3 className="project-title">{project.title}</h3>
+                                        <div className="title-with-badge">
+                                            <h3 className="project-title">{project.title}</h3>
+                                            {project.isWip ? (
+                                                <span className="wip-pill" title="Under active development">
+                                                    <Clock size={12} />
+                                                    <span>In Progress / WIP</span>
+                                                </span>
+                                            ) : (
+                                                <span className="deployed-pill">
+                                                    <CheckCircle2 size={12} />
+                                                    <span>Production Deployed</span>
+                                                </span>
+                                            )}
+                                        </div>
                                         <div className="project-api-stats">
                                             <div className="stat-item">
                                                 <Star size={14} /> <span>{stats[project.id]?.stars || 0} Stars</span>
@@ -314,13 +305,23 @@ export function exportAuditLog(activities, format) {
                                         </div>
                                     </div>
                                     <div className="project-links">
+                                        {project.previewUrl && (
+                                            <button 
+                                                className="btn btn-primary btn-sm btn-glow"
+                                                onClick={() => onPreview && onPreview(project.previewUrl, project.title)}
+                                                title="Open in-page interactive sandbox preview"
+                                            >
+                                                <Zap size={14} />
+                                                <span>Live Preview</span>
+                                            </button>
+                                        )}
                                         {project.github ? (
                                             <a href={project.github} className="icon-link" title="Source Code" target="_blank" rel="noreferrer"><Github size={20} /></a>
                                         ) : (
                                             <span className="cloud-crm-tag" title="Deployed on Salesforce Cloud CRM">Salesforce Cloud</span>
                                         )}
                                         {project.id !== "analyzer" && project.link && project.link !== "#" && (
-                                            <a href={project.link} className="icon-link" title="Live Demo" target="_blank" rel="noreferrer"><ExternalLink size={20} /></a>
+                                            <a href={project.link} className="icon-link" title="Live Site" target="_blank" rel="noreferrer"><ExternalLink size={20} /></a>
                                         )}
                                     </div>
                                 </div>
@@ -337,7 +338,7 @@ export function exportAuditLog(activities, format) {
                                     </div>
                                     <div className="project-section">
                                         <h4>Final Outcome</h4>
-                                        <p>{project.id === "analyzer" ? "Still working (Under Development): Refining API rate-limiting logic and radar map assessment." : project.outcome}</p>
+                                        <p>{project.outcome}</p>
                                     </div>
                                 </div>
 
@@ -361,7 +362,7 @@ export function exportAuditLog(activities, format) {
                                         exit={{ opacity: 0, x: -20 }}
                                         className="mobile-project-list"
                                     >
-                                        {cases.map((project) => (
+                                        {filteredCases.map((project) => (
                                             <button
                                                 key={project.id}
                                                 className="mobile-project-selector glass"
@@ -392,23 +393,26 @@ export function exportAuditLog(activities, format) {
                                             <div className="project-header">
                                                 <div className="project-title-area">
                                                     <h3 className="project-title">{expandedProject.title}</h3>
-                                                    <div className="project-api-stats">
-                                                        <div className="stat-item">
-                                                            <Star size={14} /> <span>{stats[expandedProject.id]?.stars || 0} Stars</span>
-                                                        </div>
-                                                        <div className="stat-item">
-                                                            <GitFork size={14} /> <span>{stats[expandedProject.id]?.forks || 0} Forks</span>
-                                                        </div>
-                                                    </div>
+                                                    {expandedProject.isWip && (
+                                                        <span className="wip-pill">WIP / In Progress</span>
+                                                    )}
                                                 </div>
                                                 <div className="project-links">
+                                                    {expandedProject.previewUrl && (
+                                                        <button 
+                                                            className="btn btn-primary btn-sm btn-glow"
+                                                            onClick={() => onPreview && onPreview(expandedProject.previewUrl, expandedProject.title)}
+                                                        >
+                                                            <Zap size={14} /> Live Preview
+                                                        </button>
+                                                    )}
                                                     {expandedProject.github ? (
                                                         <a href={expandedProject.github} className="icon-link" title="Source Code" target="_blank" rel="noreferrer"><Github size={20} /></a>
                                                     ) : (
                                                         <span className="cloud-crm-tag" title="Deployed on Salesforce Cloud CRM">Salesforce Cloud</span>
                                                     )}
                                                     {expandedProject.id !== "analyzer" && expandedProject.link && expandedProject.link !== "#" && (
-                                                        <a href={expandedProject.link} className="icon-link" title="Live Demo" target="_blank" rel="noreferrer"><ExternalLink size={20} /></a>
+                                                        <a href={expandedProject.link} className="icon-link" title="Live Site" target="_blank" rel="noreferrer"><ExternalLink size={20} /></a>
                                                     )}
                                                 </div>
                                             </div>
@@ -425,7 +429,7 @@ export function exportAuditLog(activities, format) {
                                                 </div>
                                                 <div className="project-section">
                                                     <h4>Final Outcome</h4>
-                                                    <p>{expandedProject.id === "analyzer" ? "Still working (Under Development): Refining API rate-limiting logic and radar map assessment." : expandedProject.outcome}</p>
+                                                    <p>{expandedProject.outcome}</p>
                                                 </div>
                                             </div>
 
