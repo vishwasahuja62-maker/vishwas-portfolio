@@ -290,66 +290,75 @@ export function exportAuditLog(activities, format) {
                     </p>
                 </div>
 
-                {/* Category Filter Pills */}
-                <div className="project-category-filters">
-                    {categories.map((cat) => (
-                        <button
-                            key={cat.id}
-                            className={`filter-btn ${selectedCategory === cat.id ? 'active' : ''}`}
-                            onClick={() => setSelectedCategory(cat.id)}
-                        >
-                            {cat.label}
-                        </button>
-                    ))}
+                {/* Tech Stack Filter Bar (Original glass capsule) */}
+                <div className="project-filter-bar glass">
+                    <div className="filter-label">
+                        <SlidersHorizontal size={14} className="text-cyan" />
+                        <span>Filter By:</span>
+                    </div>
+                    <div className="filter-buttons-list">
+                        {categories.map((cat) => (
+                            <button
+                                key={cat.id}
+                                className={`filter-btn ${selectedCategory === cat.id ? 'active' : ''}`}
+                                onClick={() => setSelectedCategory(cat.id)}
+                            >
+                                {cat.label}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
-                <div className="projects-container">
+                {/* Projects Grid Container */}
+                <div className="projects-wrapper">
                     {!isMobile ? (
                         filteredCases.map((project, index) => (
                             <div className="project-case glass" key={project.id}>
                                 <div className="project-header">
                                     <div className="project-title-area">
-                                        <h3 className="project-title">{project.title}</h3>
-                                        {project.isWip ? (
-                                            <span className="wip-pill">
-                                                <Clock size={12} />
-                                                <span>In Active Development</span>
-                                            </span>
+                                        <div className="title-with-badge">
+                                            <h3 className="project-title">{project.title}</h3>
+                                            {project.isWip ? (
+                                                <span className="wip-pill" title="Under active development">
+                                                    <Clock size={12} />
+                                                    <span>In Progress / WIP</span>
+                                                </span>
+                                            ) : (
+                                                <span className="deployed-pill">
+                                                    <CheckCircle2 size={12} />
+                                                    <span>Production Deployed</span>
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="project-api-stats">
+                                            <div className="stat-item">
+                                                <Star size={14} /> <span>{stats[project.id]?.stars || 0} Stars</span>
+                                            </div>
+                                            <div className="stat-item">
+                                                <GitFork size={14} /> <span>{stats[project.id]?.forks || 0} Forks</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="project-links">
+                                        {project.previewUrl && (
+                                            <button 
+                                                className="btn btn-primary btn-sm btn-glow"
+                                                onClick={() => onPreview && onPreview(project.previewUrl, project.title)}
+                                                title="Open in-page interactive sandbox preview"
+                                            >
+                                                <Zap size={14} />
+                                                <span>Live Preview</span>
+                                            </button>
+                                        )}
+                                        {project.github ? (
+                                            <a href={project.github} className="icon-link" title="Source Code" target="_blank" rel="noreferrer"><Github size={20} /></a>
                                         ) : (
-                                            <span className="deployed-pill">
-                                                <CheckCircle2 size={12} />
-                                                <span>Production Deployed</span>
-                                            </span>
+                                            <span className="cloud-crm-tag" title="Deployed on Salesforce Cloud CRM">Salesforce Cloud</span>
+                                        )}
+                                        {project.id !== "analyzer" && project.link && project.link !== "#" && (
+                                            <a href={project.link} className="icon-link" title="Live Site" target="_blank" rel="noreferrer"><ExternalLink size={20} /></a>
                                         )}
                                     </div>
-                                    <div className="project-api-stats">
-                                        <div className="stat-item">
-                                            <Star size={14} /> <span>{stats[project.id]?.stars || 0} Stars</span>
-                                        </div>
-                                        <div className="stat-item">
-                                            <GitFork size={14} /> <span>{stats[project.id]?.forks || 0} Forks</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="project-links">
-                                    {project.previewUrl && (
-                                        <button 
-                                            className="btn btn-primary btn-sm btn-glow"
-                                            onClick={() => onPreview && onPreview(project.previewUrl, project.title)}
-                                            title="Open in-page interactive sandbox preview"
-                                        >
-                                            <Zap size={14} />
-                                            <span>Live Preview</span>
-                                        </button>
-                                    )}
-                                    {project.github ? (
-                                        <a href={project.github} className="icon-link" title="Source Code" target="_blank" rel="noreferrer"><Github size={20} /></a>
-                                    ) : (
-                                        <span className="cloud-crm-tag" title="Deployed on Salesforce Cloud CRM">Salesforce Cloud</span>
-                                    )}
-                                    {project.id !== "analyzer" && project.link && project.link !== "#" && (
-                                        <a href={project.link} className="icon-link" title="Live Site" target="_blank" rel="noreferrer"><ExternalLink size={20} /></a>
-                                    )}
                                 </div>
 
                                 <div className="project-details-grid">
@@ -418,10 +427,12 @@ export function exportAuditLog(activities, format) {
                                         <div className="project-case glass expanded">
                                             <div className="project-header">
                                                 <div className="project-title-area">
-                                                    <h3 className="project-title">{expandedProject.title}</h3>
-                                                    {expandedProject.isWip && (
-                                                        <span className="wip-pill">WIP / In Progress</span>
-                                                    )}
+                                                    <div className="title-with-badge">
+                                                        <h3 className="project-title">{expandedProject.title}</h3>
+                                                        {expandedProject.isWip && (
+                                                            <span className="wip-pill">WIP / In Progress</span>
+                                                        )}
+                                                    </div>
                                                 </div>
                                                 <div className="project-links">
                                                     {expandedProject.previewUrl && (
