@@ -12,10 +12,10 @@ const learningStack = [
         icon: <Terminal size={18} />
     },
     {
-        title: "Advanced DSA (Patterns & Optimization)",
-        focus: "Dynamic Programming, Graph algorithms, Trees, and Slinding Windows",
-        status: "Daily Problem Solving",
-        progress: 80,
+        title: "Data Structures & Algorithms (Core Foundations)",
+        focus: "Arrays, Strings, Two Pointers, Hashing, Recursion, and Sliding Window basics",
+        status: "Active Daily Practice",
+        progress: 65,
         color: "purple",
         icon: <Cpu size={18} />
     },
@@ -23,7 +23,7 @@ const learningStack = [
         title: "System Design & Distributed Scalability",
         focus: "Microservices, Caching strategies, Message Queues (Kafka/Redis), and Database Sharding",
         status: "Architectural Deep Dives",
-        progress: 65,
+        progress: 55,
         color: "amber",
         icon: <BookOpen size={18} />
     }
@@ -65,7 +65,7 @@ const CurrentlyLearning = () => {
 
                             <div className="learning-progress-track">
                                 <div className="learning-progress-header">
-                                    <span className="progress-label">Confidence & Velocity</span>
+                                    <span className="progress-label">Practice & Consistency</span>
                                     <span className="progress-val">{item.progress}%</span>
                                 </div>
                                 <div className="progress-bar-bg">
@@ -84,4 +84,3 @@ const CurrentlyLearning = () => {
 };
 
 export default CurrentlyLearning;
-
