@@ -13,7 +13,7 @@ import {
 
 const timelineEvents = [
     {
-        year: '2020 – 2022',
+        year: '2022 – 2024',
         period: 'Secondary Education',
         title: 'Class X & XII Board Examinations',
         subtitle: 'Bhatnagar International Summit School, New Delhi',
