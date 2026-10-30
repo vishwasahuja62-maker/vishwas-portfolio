@@ -1,128 +1,47 @@
-.glass-shatter-overlay {
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 999999;
-    background: radial-gradient(circle at center, #0f172a 0%, #030712 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    user-select: none;
-    perspective: 800px;
-    perspective-origin: center center;
-}
+/* =============================================================================
+   GLASS SHATTER INTRO — CSS
+   Animate ONLY transform & opacity. No blur/filter/box-shadow on shards.
+   perspective: 900px is on .glass-shards-stage (the parent), not on shards.
+   ============================================================================= */
 
-.glass-shatter-base {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at center, #0f172a 0%, #030712 100%);
-    z-index: 1;
-}
-
-.glass-shatter-content {
-    position: relative;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    pointer-events: auto;
-}
-
-/* Glass cyber button */
-.glass-enter-btn {
-    position: relative;
-    padding: 1rem 2.5rem;
-    font-size: 1.05rem;
-    font-weight: 700;
-    font-family: var(--font-heading, inherit);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: #e2e8f0;
-    background: rgba(15, 23, 42, 0.7);
-    border: 1px solid rgba(6, 182, 212, 0.4);
-    border-radius: 9999px;
-    cursor: pointer;
-    box-shadow: 0 0 25px rgba(6, 182, 212, 0.2), inset 0 0 15px rgba(6, 182, 212, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
-    overflow: hidden;
-}
-
-.glass-enter-btn:hover:not(:disabled) {
-    transform: scale(1.04);
-    border-color: #38bdf8;
-    color: #ffffff;
-    box-shadow: 0 0 35px rgba(6, 182, 212, 0.45), inset 0 0 20px rgba(6, 182, 212, 0.2);
-}
-
-.glass-enter-btn:disabled {
-    cursor: default;
-    pointer-events: none;
-}
-
-.glass-enter-btn-text {
-    position: relative;
-    z-index: 2;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-}
-
-.glass-enter-glow {
-    position: absolute;
-    inset: 0;
-    border-radius: 9999px;
-    background: radial-gradient(circle at center, rgba(6, 182, 212, 0.25) 0%, transparent 70%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.glass-enter-btn:hover:not(:disabled) .glass-enter-glow {
-    opacity: 1;
-}
-
-/* Impact flash point */
+/* Impact flash */
 .glass-impact-flash {
     position: absolute;
     width: 260px;
     height: 260px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.5) 25%, rgba(6, 182, 212, 0.3) 50%, transparent 75%);
+    background: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0.7) 30%,
+        rgba(6, 182, 212, 0.4) 55%,
+        transparent 75%
+    );
     pointer-events: none;
-    z-index: 20;
-    mix-blend-mode: screen;
+    z-index: 30;
+    transform: translate(-50%, -50%);
 }
 
-/* SVG cracks layer */
+/* SVG cracks layer — drawn OVER the intact overlay background */
 .glass-cracks-svg {
     position: absolute;
     inset: 0;
     width: 100vw;
     height: 100vh;
     pointer-events: none;
-    z-index: 15;
+    z-index: 20;
+    overflow: visible;
 }
 
 .glass-crack-line {
     fill: none;
-    stroke: rgba(255, 255, 255, 0.9);
+    stroke: rgba(255, 255, 255, 0.95);
     stroke-linecap: round;
     stroke-linejoin: round;
-    filter: drop-shadow(0 0 2px rgba(6, 182, 212, 0.8));
 }
 
-.glass-crack-ring {
-    fill: none;
-    stroke: rgba(255, 255, 255, 0.7);
-    stroke-linecap: round;
-    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.6));
-}
-
-/* Shards 3D container */
+/* ── Shards Stage ──
+   perspective lives HERE on the parent so 3-D rotations of children work */
 .glass-shards-stage {
     position: absolute;
     inset: 0;
@@ -130,17 +49,51 @@
     height: 100vh;
     pointer-events: none;
     z-index: 25;
+    perspective: 900px;
+    perspective-origin: center center;
 }
 
+/* Each shard fills the full viewport.
+   clip-path cuts it to its triangle.
+   background-image shows the html2canvas screenshot of the landing screen.
+   NO blur, NO box-shadow, NO filter. Full brightness (no dark background behind it). */
 .glass-shard {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
     width: 100vw;
     height: 100vh;
-    background: radial-gradient(circle at center, #0f172a 0%, #030712 100%);
+    background-color: #080a0c;
+    background-size: 100vw 100vh;
+    background-position: 0 0;
+    background-repeat: no-repeat;
     pointer-events: none;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     transform-style: preserve-3d;
 }
 
+/* Sheen overlay inside each shard (diagonal gradient, pure highlight only) */
+.glass-shard-sheen {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+/* SVG edge-highlight layer that sits on top of shards for the 1px white border effect */
+.glass-shards-edge-svg {
+    position: absolute;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 26;
+    overflow: visible;
+}
+
+.glass-shard-edge-poly {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.75);
+    stroke-width: 1;
+    stroke-linejoin: round;
+}

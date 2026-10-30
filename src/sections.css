@@ -1186,12 +1186,16 @@
 }
 
 .page-wrapper-view {
-    padding-top: 5rem;
+    padding-top: 5.5rem;
     min-height: calc(100vh - 120px);
 }
 
+.page-wrapper-view .section-padding {
+    padding-top: 1rem;
+}
+
 .page-breadcrumb-bar {
-    margin-bottom: 2rem;
+    margin-bottom: 0.5rem;
 }
 
 .page-back-button {

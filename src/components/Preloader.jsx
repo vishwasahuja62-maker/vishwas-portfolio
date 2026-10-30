@@ -1,520 +1,610 @@
-import React, { useRef, useEffect, useState } from 'react';
+/**
+ * Preloader.jsx — Cinematic Glass Shatter Intro
+ *
+ * STACK: React 18 + GSAP + d3-delaunay + html2canvas
+ *
+ * TIMELINE SPECIFICATION (Zero Dead Wait):
+ *   t=0.00s       → Click: Sound plays instantly in same frame (preloaded audio, currentTime=0).
+ *                   1-frame impact flash + 4px screen shake.
+ *   t=0.00–0.28s  → Cracks radiate outward from click (nearest edges start immediately, farthest by ~0.20s).
+ *                   Impact-near cracks have 2.0px stroke & 100% white opacity; outer cracks have 1.2px stroke.
+ *   t=0.30s       → BREAK (0.02s after cracks complete): Overlay bg goes transparent, preloader content hidden.
+ *                   Website fades in from opacity 0.25 → 1.0 (0.5s) & scales 1.06 → 1.0 (0.5s).
+ *                   Shards pop outward 4–12px with small rotation (0.05s).
+ *   t=0.35–1.40s  → FALL: Center/small shards fall fast (0.55–0.70s) clearing the center instantly.
+ *                   Large outer shards fall heavy and slow (0.90–1.05s) with deep 3D rotation.
+ *                   Every shard travels well past the viewport (y += h + 500px).
+ *                   Opacity fade occurs ONLY in the final 25% of each shard's fall.
+ *   t=1.45s       → COMPLETE: Stage & cracks removed cleanly from DOM, scroll unlocked, onComplete called.
+ */
+
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import logoImg from '../assets/images.jpg';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
+import { Delaunay } from 'd3-delaunay';
+import html2canvas from 'html2canvas';
 import '../styles/preloader.css';
 import '../styles/glassShatter.css';
 
-/**
- * ============================================================================
- * CINEMATIC GLASS SHATTER INTRO CONFIGURATION
- * ============================================================================
- */
-const CRACK_COUNT_DESKTOP = 13;
-const CRACK_COUNT_MOBILE = 8;
-const CONCENTRIC_RINGS = 3;
-const SHARDS_DESKTOP = 24;
-const SHARDS_MOBILE = 11;
+/* ============================================================================
+   CONFIG — all numbers centralized and easy to tweak
+   ============================================================================ */
+const CONFIG = {
+    // Crack animation
+    CRACK_DURATION:         0.28,        // total time window for cracks to spread outward
+    CRACK_MAX_EDGES:        65,          // max crack edges to render
+    CRACK_NEAR_THRESHOLD:   200,         // px from impact considered "near" (thicker stroke)
 
-const FLASH_DURATION = 0.15;
-const CRACK_DURATION = 0.25;
-const PAUSE_DURATION = 0.10;
-const FALL_DURATION = 1.05;
+    // Break & Pop phase (starts 0.02s after cracks end — NO DEAD WAIT)
+    BREAK_DELAY:            0.30,        // absolute timeline second when break starts
+    BREAK_POP_DURATION:     0.05,        // snappy pop outward
+    POP_DIST_MIN:           4,           // min pop px
+    POP_DIST_MAX:           12,          // max pop px
 
+    // Falling shard dynamics (small = fast ~0.6s, large = max ~1.05s)
+    FALL_DUR_SMALL:         0.58,        // small shards clear center fast
+    FALL_DUR_LARGE:         1.02,        // large outer shards take max ~1.02s
+    FALL_STAGGER_MAX:       0.20,        // center shards start at 0.00s stagger, farthest at 0.20s
+    FALL_X_DRIFT_MAX:       120,         // max horizontal drift ±px
+    FALL_ROT_Z_SMALL:       30,          // rotZ for small shards
+    FALL_ROT_Z_LARGE:       55,          // rotZ for large shards
+    FALL_ROT_XY_SMALL:      40,          // rotX/Y for small shards
+    FALL_ROT_XY_LARGE:      75,          // rotX/Y for large shards
+
+    // Main website reveal (prevents text clash with falling shards)
+    REVEAL_FADE_FROM:       0.25,        // website opacity starts at 0.25
+    REVEAL_FADE_DUR:        0.50,        // fades to 1.0 in 0.5s
+    REVEAL_SCALE_FROM:      1.06,        // starts scale(1.06)
+    REVEAL_SCALE_DUR:       0.55,        // scales to 1.0 smoothly
+
+    // Impact FX & Audio
+    SHAKE_PX:               4,           // screen shake amplitude px
+    SHAKE_DURATION:         0.08,        // shake oscillation duration
+    FLASH_DURATION:         0.10,        // impact flash fade duration
+    AUDIO_SRC:              '/assets/glass-break.mp3',
+    MIN_TRIANGLE_AREA:      500,         // px² — filter out thin edge slivers
+};
+
+/* ============================================================================
+   HELPER: Build Delaunay triangulation (Desktop 35–45, Mobile ~16 shards)
+   ============================================================================ */
+function buildDelaunayGeometry(clickX, clickY, isMobileScreen, w, h) {
+    const pts = [];
+
+    if (isMobileScreen) {
+        // Mobile: target ~16 shards
+        const rings = [
+            { r: 50, count: 3 },
+            { r: 130, count: 4 },
+        ];
+        rings.forEach(({ r, count }) => {
+            for (let i = 0; i < count; i++) {
+                const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+                const rJitter = r * (0.85 + Math.random() * 0.3);
+                pts.push([
+                    clickX + Math.cos(angle) * rJitter,
+                    clickY + Math.sin(angle) * rJitter
+                ]);
+            }
+        });
+        pts.push(
+            [0, 0], [w, 0], [0, h], [w, h],
+            [w * 0.5, 0], [w * 0.5, h],
+            [0, h * 0.5], [w, h * 0.5]
+        );
+    } else {
+        // Desktop: target ~35–45 shards (small near impact, large far away)
+        const rings = [
+            { r: 85,  count: 5 },
+            { r: 220, count: 6 },
+            { r: 430, count: 7 },
+        ];
+        rings.forEach(({ r, count }) => {
+            for (let i = 0; i < count; i++) {
+                const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+                const rJitter = r * (0.85 + Math.random() * 0.3);
+                pts.push([
+                    clickX + Math.cos(angle) * rJitter,
+                    clickY + Math.sin(angle) * rJitter
+                ]);
+            }
+        });
+        pts.push(
+            [0, 0], [w, 0], [0, h], [w, h],
+            [w * 0.5, 0], [w * 0.5, h],
+            [0, h * 0.5], [w, h * 0.5]
+        );
+    }
+
+    const delaunay = Delaunay.from(pts);
+    const { triangles, halfedges } = delaunay;
+
+    /* --- Build triangular shards --- */
+    const shards = [];
+    const validAreas = [];
+
+    for (let i = 0; i < triangles.length; i += 3) {
+        const ia = triangles[i], ib = triangles[i + 1], ic = triangles[i + 2];
+        const ax = pts[ia][0], ay = pts[ia][1];
+        const bx = pts[ib][0], by = pts[ib][1];
+        const cx = pts[ic][0], cy = pts[ic][1];
+
+        const area = Math.abs((bx - ax) * (cy - ay) - (cx - ax) * (by - ay)) / 2;
+        if (area < CONFIG.MIN_TRIANGLE_AREA) continue;
+
+        const centX = (ax + bx + cx) / 3;
+        const centY = (ay + by + cy) / 3;
+        const dist  = Math.hypot(centX - clickX, centY - clickY);
+        const angle = Math.atan2(centY - clickY, centX - clickX);
+
+        validAreas.push(area);
+
+        shards.push({
+            polygon:   `polygon(${ax}px ${ay}px, ${bx}px ${by}px, ${cx}px ${cy}px)`,
+            svgPoints: `${ax},${ay} ${bx},${by} ${cx},${cy}`,
+            dist,
+            angle,
+            area,
+            sheen: Math.random() * 360,
+        });
+    }
+
+    // Normalized size: 0 = smallest shard, 1 = largest shard
+    const minArea = Math.min(...validAreas, 1000);
+    const maxArea = Math.max(...validAreas, 10000);
+    shards.forEach(s => {
+        s.sizeNorm = Math.min(1, Math.max(0, (s.area - minArea) / (maxArea - minArea)));
+    });
+
+    /* --- Build unique crack edges sorted strictly from click outwards --- */
+    const edgeSet = new Set();
+    const edges   = [];
+    for (let e = 0; e < halfedges.length; e++) {
+        const opp = halfedges[e];
+        if (opp < e) continue;
+        const ia = triangles[e];
+        const ib = triangles[e % 3 === 2 ? e - 2 : e + 1];
+        const key = `${Math.min(ia, ib)}-${Math.max(ia, ib)}`;
+        if (edgeSet.has(key)) continue;
+        edgeSet.add(key);
+
+        const ax = pts[ia][0], ay = pts[ia][1];
+        const bx = pts[ib][0], by = pts[ib][1];
+        const midX = (ax + bx) / 2, midY = (ay + by) / 2;
+        const dist = Math.hypot(midX - clickX, midY - clickY);
+        edges.push({ ax, ay, bx, by, dist });
+    }
+
+    edges.sort((a, b) => a.dist - b.dist);
+
+    return { shards, edges };
+}
+
+/* ============================================================================
+   COMPONENT
+   ============================================================================ */
 const Preloader = ({ onComplete }) => {
-    const containerRef = useRef(null);
-    const canvasRef = useRef(null);
-    const flashRef = useRef(null);
-    const cracksSvgRef = useRef(null);
-    const shardsStageRef = useRef(null);
+    const containerRef    = useRef(null);
+    const canvasRef       = useRef(null);
+    const flashRef        = useRef(null);
+    const cracksSvgRef    = useRef(null);
+    const shardsStageRef  = useRef(null);
+    const screenshotRef   = useRef(null);
+    const canvasAnimIdRef = useRef(null);
+    const isExitingRef    = useRef(false);
+    const audioRef        = useRef(null);
     const [isMobile, setIsMobile] = useState(false);
-    const speedRef = useRef(15);
-    const isExitingRef = useRef(false);
 
-    // Dynamic Crack & Shard Geometry State
-    const [cracksData, setCracksData] = useState({ radials: [], rings: [] });
-    const [shardsPolygons, setShardsPolygons] = useState([]);
-    const [isShattering, setIsShattering] = useState(false);
-
-    // Robust Mobile Detection
+    // ── Preload Audio on Mount ────────────────────────────────────────────────
     useEffect(() => {
-        const mediaQuery = window.matchMedia('(max-width: 1100px)');
-        setIsMobile(mediaQuery.matches);
-
-        const handler = (e) => setIsMobile(e.matches);
-        mediaQuery.addEventListener('change', handler);
-        return () => mediaQuery.removeEventListener('change', handler);
+        try {
+            const audio = new Audio(CONFIG.AUDIO_SRC);
+            audio.preload = 'auto';
+            audio.load();
+            audioRef.current = audio;
+        } catch (_) {}
     }, []);
 
-    // Canvas Space Particle Field
+    // ── Mobile detection ──────────────────────────────────────────────────────
+    useEffect(() => {
+        const mq = window.matchMedia('(max-width: 767px)');
+        setIsMobile(mq.matches);
+        const handler = (e) => setIsMobile(e.matches);
+        mq.addEventListener('change', handler);
+        return () => mq.removeEventListener('change', handler);
+    }, []);
+
+    // ── Canvas particle field ─────────────────────────────────────────────────
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
         const ctx = canvas.getContext('2d');
-        let animationFrameId;
         let particles = [];
-        const particleCount = isMobile ? 80 : 250;
+        const speedRef2 = { v: 15 };
+        const count = isMobile ? 80 : 250;
 
-        const resizeCanvas = () => {
-            canvas.width = window.innerWidth;
+        const resize = () => {
+            canvas.width  = window.innerWidth;
             canvas.height = window.innerHeight;
-            init();
+            initParticles();
         };
 
         class Particle {
-            constructor() {
-                this.init();
-            }
-            init() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.z = Math.random() * canvas.width;
+            constructor() { this.reset(); }
+            reset() {
+                this.x     = Math.random() * canvas.width;
+                this.y     = Math.random() * canvas.height;
+                this.z     = Math.random() * canvas.width;
                 this.prevZ = this.z;
             }
-            update(speed) {
+            update() {
                 this.prevZ = this.z;
-                this.z -= speed;
-                if (this.z <= 0) {
-                    this.init();
-                    this.prevZ = this.z;
-                }
+                this.z    -= speedRef2.v;
+                if (this.z <= 0) { this.reset(); this.prevZ = this.z; }
             }
             draw() {
-                const cx = canvas.width / 2;
-                const cy = canvas.height / 2;
-
-                const x = (this.x - cx) * (canvas.width / this.z) + cx;
-                const y = (this.y - cy) * (canvas.width / this.z) + cy;
-
-                const prevX = (this.x - cx) * (canvas.width / this.prevZ) + cx;
-                const prevY = (this.y - cy) * (canvas.width / this.prevZ) + cy;
-
-                const alpha = Math.min(1, (1 - this.z / canvas.width) * 1.5);
-                const size = Math.max(0.5, (1 - this.z / canvas.width) * 2.5);
-
-                ctx.beginPath();
-                ctx.moveTo(prevX, prevY);
-                ctx.lineTo(x, y);
-                ctx.strokeStyle = `rgba(6, 182, 212, ${alpha * 0.7})`;
-                ctx.lineWidth = size;
-                ctx.stroke();
-
-                ctx.beginPath();
-                ctx.arc(x, y, size * 0.8, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-                ctx.fill();
+                const cx = canvas.width / 2, cy = canvas.height / 2;
+                const x  = (this.x - cx) * (canvas.width / this.z) + cx;
+                const y  = (this.y - cy) * (canvas.width / this.z) + cy;
+                const px = (this.x - cx) * (canvas.width / this.prevZ) + cx;
+                const py = (this.y - cy) * (canvas.width / this.prevZ) + cy;
+                const a  = Math.min(1, (1 - this.z / canvas.width) * 1.5);
+                const sz = Math.max(0.5, (1 - this.z / canvas.width) * 2.5);
+                ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(x, y);
+                ctx.strokeStyle = `rgba(6,182,212,${a * 0.7})`;
+                ctx.lineWidth = sz; ctx.stroke();
+                ctx.beginPath(); ctx.arc(x, y, sz * 0.8, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255,255,255,${a})`; ctx.fill();
             }
         }
 
-        const init = () => {
-            particles = [];
-            for (let i = 0; i < particleCount; i++) {
-                particles.push(new Particle());
-            }
+        const initParticles = () => {
+            particles = Array.from({ length: count }, () => new Particle());
         };
 
         const animate = () => {
-            ctx.fillStyle = 'rgba(3, 7, 18, 0.3)';
+            ctx.fillStyle = 'rgba(3,7,18,0.3)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            const currentSpeed = isExitingRef.current ? speedRef.current * 3 : speedRef.current;
-            particles.forEach(p => {
-                p.update(currentSpeed);
-                p.draw();
-            });
-
-            if (!isExitingRef.current || speedRef.current > 0) {
-                animationFrameId = requestAnimationFrame(animate);
-            }
+            particles.forEach(p => { p.update(); p.draw(); });
+            canvasAnimIdRef.current = requestAnimationFrame(animate);
         };
 
-        resizeCanvas();
+        resize();
         animate();
-
-        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('resize', resize);
         return () => {
-            cancelAnimationFrame(animationFrameId);
-            window.removeEventListener('resize', resizeCanvas);
+            cancelAnimationFrame(canvasAnimIdRef.current);
+            window.removeEventListener('resize', resize);
         };
     }, [isMobile]);
 
-    // Entrance Animations
+    // ── html2canvas capture (idle time after entrance settles) ────────────────
+    useEffect(() => {
+        const timer = setTimeout(async () => {
+            if (!containerRef.current) return;
+            try {
+                if (canvasRef.current) canvasRef.current.style.opacity = '0';
+                const dataCanvas = await html2canvas(containerRef.current, {
+                    scale:       1,
+                    useCORS:     true,
+                    allowTaint:  true,
+                    logging:     false,
+                    backgroundColor: null,
+                });
+                screenshotRef.current = dataCanvas.toDataURL('image/webp', 0.92);
+            } catch (_err) {
+                // Screenshot fallback handled gracefully
+            } finally {
+                if (canvasRef.current) canvasRef.current.style.opacity = '1';
+            }
+        }, 1600);
+        return () => clearTimeout(timer);
+    }, []);
+
+    // ── GSAP entrance animations ──────────────────────────────────────────────
     useGSAP(() => {
         if (isMobile) {
-            gsap.fromTo(".preloader-content",
+            gsap.fromTo('.preloader-content',
                 { opacity: 0, y: 20 },
-                {
-                    opacity: 1,
-                    y: 0,
-                    duration: 1.2,
-                    ease: "power3.out",
-                    delay: 0.3
-                }
+                { opacity: 1, y: 0, duration: 1.2, ease: 'power3.out', delay: 0.3 }
             );
-
-            gsap.to(".preloader-logo", {
-                scale: 1.05,
-                duration: 2,
-                repeat: -1,
-                yoyo: true,
-                ease: "sine.inOut"
+            gsap.to('.preloader-logo', {
+                scale: 1.05, duration: 2, repeat: -1, yoyo: true, ease: 'sine.inOut'
             });
             return;
         }
 
-        const tl = gsap.timeline({
-            defaults: { ease: "expo.out", duration: 1.2 }
-        });
-
-        tl.to(".identity-reveal", {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 1.5,
-            ease: "power4.out"
-        });
-
-        tl.from(".identity-name", {
-            letterSpacing: "0.2em",
-            duration: 1.5,
-            ease: "power3.out"
-        }, "-=1.5");
-
-        tl.to(".status-item", {
-            opacity: 1,
-            y: 0,
-            stagger: 0.15,
-            duration: 0.8,
-            ease: "back.out(1.7)"
-        }, "-=0.8");
-
-        tl.to(".enter-cta", {
-            opacity: 1,
-            scale: 1,
-            y: 0,
-            duration: 1,
-            ease: "expo.out"
-        }, "-=0.2");
-
+        const tl = gsap.timeline({ defaults: { ease: 'expo.out', duration: 1.2 } });
+        tl.to('.identity-reveal', { opacity: 1, y: 0, scale: 1, duration: 1.5, ease: 'power4.out' });
+        tl.from('.identity-name', { letterSpacing: '0.2em', duration: 1.5, ease: 'power3.out' }, '-=1.5');
+        tl.to('.status-item', { opacity: 1, y: 0, stagger: 0.15, duration: 0.8, ease: 'back.out(1.7)' }, '-=0.8');
+        tl.to('.enter-cta', { opacity: 1, scale: 1, y: 0, duration: 1, ease: 'expo.out' }, '-=0.2');
     }, { scope: containerRef, dependencies: [isMobile] });
 
-    /**
-     * Generate jagged radial and concentric cracks & triangulated shards from click coordinates
-     */
-    const generateShatterGeometry = (clickX, clickY) => {
-        const w = window.innerWidth;
-        const h = window.innerHeight;
-        const isMobileScreen = w < 768;
-
-        const maxDist = Math.hypot(Math.max(clickX, w - clickX), Math.max(clickY, h - clickY));
-        const numCracks = isMobileScreen ? CRACK_COUNT_MOBILE : CRACK_COUNT_DESKTOP;
-        const numShards = isMobileScreen ? SHARDS_MOBILE : SHARDS_DESKTOP;
-
-        const radials = [];
-        const angles = [];
-        const baseStep = (Math.PI * 2) / numCracks;
-
-        for (let i = 0; i < numCracks; i++) {
-            const jitter = (Math.random() - 0.5) * 0.45;
-            const angle = i * baseStep + jitter;
-            angles.push(angle);
-
-            const length = maxDist * (0.85 + Math.random() * 0.35);
-            const segments = 4;
-            let d = `M ${clickX} ${clickY}`;
-            for (let s = 1; s <= segments; s++) {
-                const r = (length / segments) * s;
-                const dev = (Math.random() - 0.5) * 35;
-                const px = clickX + Math.cos(angle) * r - Math.sin(angle) * dev;
-                const py = clickY + Math.sin(angle) * r + Math.cos(angle) * dev;
-                d += ` L ${px.toFixed(1)} ${py.toFixed(1)}`;
-            }
-            radials.push({ d, strokeWidth: i % 3 === 0 ? 2.2 : 1.4 });
-        }
-
-        const rings = [];
-        const ringRadii = [maxDist * 0.12, maxDist * 0.28, maxDist * 0.48];
-        ringRadii.slice(0, CONCENTRIC_RINGS).forEach((r) => {
-            let ringPath = '';
-            for (let i = 0; i < numCracks; i++) {
-                const a = angles[i];
-                const jitterR = r * (0.82 + Math.random() * 0.36);
-                const rx = clickX + Math.cos(a) * jitterR;
-                const ry = clickY + Math.sin(a) * jitterR;
-                if (i === 0) {
-                    ringPath += `M ${rx.toFixed(1)} ${ry.toFixed(1)}`;
-                } else {
-                    ringPath += ` L ${rx.toFixed(1)} ${ry.toFixed(1)}`;
-                }
-            }
-            ringPath += ' Z';
-            rings.push({ d: ringPath });
-        });
-
-        const shards = [];
-        const shardRings = 2;
-        const shardsPerRing = Math.round(numShards / shardRings);
-
-        const innerR = Math.min(w, h) * 0.28;
-        const outerR = maxDist * 1.35;
-
-        const innerPoints = [];
-        for (let i = 0; i < shardsPerRing; i++) {
-            const angle = (i * Math.PI * 2) / shardsPerRing + (Math.random() - 0.5) * 0.3;
-            const dist = innerR * (0.7 + Math.random() * 0.5);
-            innerPoints.push({
-                x: clickX + Math.cos(angle) * dist,
-                y: clickY + Math.sin(angle) * dist
-            });
-        }
-
-        const outerPoints = [];
-        for (let i = 0; i < shardsPerRing; i++) {
-            const angle = (i * Math.PI * 2) / shardsPerRing + (Math.random() - 0.5) * 0.35;
-            const dist = outerR * (0.85 + Math.random() * 0.3);
-            outerPoints.push({
-                x: clickX + Math.cos(angle) * dist,
-                y: clickY + Math.sin(angle) * dist
-            });
-        }
-
-        for (let i = 0; i < shardsPerRing; i++) {
-            const p1 = innerPoints[i];
-            const p2 = innerPoints[(i + 1) % shardsPerRing];
-            const poly = `polygon(${clickX}px ${clickY}px, ${p1.x}px ${p1.y}px, ${p2.x}px ${p2.y}px)`;
-            const centerDist = Math.hypot((p1.x + p2.x) / 2 - clickX, (p1.y + p2.y) / 2 - clickY);
-            shards.push({
-                polygon: poly,
-                dist: centerDist,
-                angle: (i * Math.PI * 2) / shardsPerRing
-            });
-        }
-
-        for (let i = 0; i < shardsPerRing; i++) {
-            const ip1 = innerPoints[i];
-            const ip2 = innerPoints[(i + 1) % shardsPerRing];
-            const op1 = outerPoints[i];
-            const op2 = outerPoints[(i + 1) % shardsPerRing];
-
-            const poly1 = `polygon(${ip1.x}px ${ip1.y}px, ${op1.x}px ${op1.y}px, ${ip2.x}px ${ip2.y}px)`;
-            const dist1 = Math.hypot((ip1.x + op1.x + ip2.x) / 3 - clickX, (ip1.y + op1.y + ip2.y) / 3 - clickY);
-            shards.push({
-                polygon: poly1,
-                dist: dist1,
-                angle: ((i + 0.5) * Math.PI * 2) / shardsPerRing
-            });
-
-            if (shards.length < numShards) {
-                const poly2 = `polygon(${ip2.x}px ${ip2.y}px, ${op1.x}px ${op1.y}px, ${op2.x}px ${op2.y}px)`;
-                const dist2 = Math.hypot((ip2.x + op1.x + op2.x) / 3 - clickX, (ip2.y + op1.y + op2.y) / 3 - clickY);
-                shards.push({
-                    polygon: poly2,
-                    dist: dist2,
-                    angle: ((i + 0.8) * Math.PI * 2) / shardsPerRing
-                });
-            }
-        }
-
-        return { cracks: { radials, rings }, shards };
-    };
-
-    /**
-     * ON BUTTON CLICK: CINEMATIC GLASS SHATTER SEQUENCE
-     */
-    const handleEnter = (e) => {
+    // ── MAIN CLICK HANDLER ────────────────────────────────────────────────────
+    const handleEnter = useCallback((e) => {
         if (isExitingRef.current) return;
         isExitingRef.current = true;
 
-        const clickX = e.clientX || window.innerWidth / 2;
-        const clickY = e.clientY || window.innerHeight / 2;
+        /* ── Audio: Play IMMEDIATELY in this very frame (cracks start) ── */
+        try {
+            const audio = audioRef.current || new Audio(CONFIG.AUDIO_SRC);
+            audio.currentTime = 0;
+            audio.volume = 0.65;
+            audio.play().catch(() => {});
+        } catch (_) {}
 
-        // Respect prefers-reduced-motion
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (prefersReducedMotion) {
+        const clickX = (e && e.clientX != null) ? e.clientX : window.innerWidth / 2;
+        const clickY = (e && e.clientY != null) ? e.clientY : window.innerHeight / 2;
+        const w = window.innerWidth, h = window.innerHeight;
+        const mobile = w < 768;
+
+        /* ── prefers-reduced-motion: skip to simple fade ── */
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            cancelAnimationFrame(canvasAnimIdRef.current);
             gsap.to(containerRef.current, {
-                opacity: 0,
-                duration: 0.5,
-                ease: 'power2.out',
-                onComplete: onComplete
+                opacity: 0, duration: 0.5, ease: 'power2.out', onComplete: onComplete
             });
             return;
         }
 
-        // Failsafe Audio Playback
-        try {
-            const audio = new Audio('/assets/glass-break.mp3');
-            audio.volume = 0.65;
-            const playPromise = audio.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(() => { /* audio file absent or autoplay restricted; ignore */ });
-            }
-        } catch (err) { /* ignore */ }
+        /* ── Stop particle canvas ── */
+        cancelAnimationFrame(canvasAnimIdRef.current);
 
-        // Generate dynamic cracks and triangulation
-        const { cracks, shards } = generateShatterGeometry(clickX, clickY);
-        setCracksData(cracks);
-        setShardsPolygons(shards);
-        setIsShattering(true);
+        /* ── Build geometry ── */
+        const { shards, edges } = buildDelaunayGeometry(clickX, clickY, mobile, w, h);
 
-        if (flashRef.current) {
-            flashRef.current.style.left = `${clickX - 130}px`;
-            flashRef.current.style.top = `${clickY - 130}px`;
+        /* ── Inject SVG crack paths (with stroke & opacity differentiation) ── */
+        const crackSvg = cracksSvgRef.current;
+        const crackPathEls = [];
+        if (crackSvg) {
+            crackSvg.innerHTML = '';
+            const edgesToDraw = edges.slice(0, CONFIG.CRACK_MAX_EDGES);
+            edgesToDraw.forEach(({ ax, ay, bx, by, dist }) => {
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', `M ${ax.toFixed(1)} ${ay.toFixed(1)} L ${bx.toFixed(1)} ${by.toFixed(1)}`);
+                path.setAttribute('class', 'glass-crack-line');
+
+                // Near impact cracks are thicker and brighter
+                const isNear = dist < CONFIG.CRACK_NEAR_THRESHOLD;
+                path.setAttribute('stroke-width', isNear ? '2.0' : '1.2');
+                path.style.stroke = isNear ? 'rgba(255, 255, 255, 1)' : 'rgba(255, 255, 255, 0.75)';
+
+                crackSvg.appendChild(path);
+                crackPathEls.push({ path, dist });
+            });
         }
 
+        /* ── Inject shards into DOM (FULL BRIGHTNESS — NO DARK OVERLAY) ── */
+        const stage = shardsStageRef.current;
+        if (!stage) return;
+        stage.innerHTML = '';
+
+        const bgImg = screenshotRef.current
+            ? `url(${screenshotRef.current})`
+            : 'radial-gradient(circle at center, #0f172a 0%, #030712 100%)';
+
+        // Edge-highlight SVG layer for crisp 1px white lines
+        const edgeSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        edgeSvg.setAttribute('class', 'glass-shards-edge-svg');
+        edgeSvg.setAttribute('width', '100%');
+        edgeSvg.setAttribute('height', '100%');
+        edgeSvg.style.cssText = 'position:absolute;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:26;overflow:visible;';
+
+        const shardEls = shards.map((shard) => {
+            // Shard div — fully bright, identical to intact landing screen
+            const div = document.createElement('div');
+            div.className = 'glass-shard';
+            div.style.cssText = `
+                clip-path: ${shard.polygon};
+                background-image: ${bgImg};
+                background-size: ${w}px ${h}px;
+                background-position: 0 0;
+                opacity: 1;
+                will-change: transform, opacity;
+            `;
+
+            // Subtle sheen overlay (pure highlight only, never darkening)
+            const sheen = document.createElement('div');
+            sheen.className = 'glass-shard-sheen';
+            sheen.style.cssText = `
+                position:absolute;inset:0;pointer-events:none;
+                background:linear-gradient(${shard.sheen}deg,
+                    transparent 0%,
+                    rgba(255,255,255,0.12) 48%,
+                    rgba(255,255,255,0.06) 53%,
+                    transparent 100%);
+            `;
+            div.appendChild(sheen);
+            stage.appendChild(div);
+
+            // 1px white edge highlight polygon
+            const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            poly.setAttribute('points', shard.svgPoints);
+            poly.setAttribute('class', 'glass-shard-edge-poly');
+            edgeSvg.appendChild(poly);
+
+            return div;
+        });
+
+        stage.appendChild(edgeSvg);
+
+        /* ── GSAP TIMELINE ── */
         requestAnimationFrame(() => {
             const tl = gsap.timeline();
 
-            // 1. Fade out preloader content immediately on impact
-            tl.to(".preloader-content", {
-                opacity: 0,
-                scale: 0.96,
-                duration: 0.12,
-                ease: "power2.out"
-            }, 0);
-
-            // 2. Impact flash: soft white radial-gradient fades out in ~0.15s
-            tl.fromTo(flashRef.current, 
-                { opacity: 1, scale: 0.4 },
-                { opacity: 0, scale: 1.4, duration: FLASH_DURATION, ease: 'power2.out' },
+            /* t=0: Position & show impact flash */
+            if (flashRef.current) {
+                flashRef.current.style.left = `${clickX}px`;
+                flashRef.current.style.top  = `${clickY}px`;
+            }
+            tl.fromTo(flashRef.current,
+                { opacity: 1, scale: 0.2 },
+                { opacity: 0, scale: 2.2, duration: CONFIG.FLASH_DURATION, ease: 'power2.out' },
                 0
             );
 
-            // 3. Crack lines: radiate outward using stroke-dashoffset animation over ~0.25s
-            const crackPaths = cracksSvgRef.current ? cracksSvgRef.current.querySelectorAll('path') : [];
-            if (crackPaths.length > 0) {
-                crackPaths.forEach((path) => {
-                    const len = path.getTotalLength ? path.getTotalLength() : 300;
-                    path.style.strokeDasharray = `${len} ${len}`;
-                    path.style.strokeDashoffset = len;
-                });
+            /* t=0: Subtle 4px screen shake */
+            tl.to(containerRef.current, {
+                x: CONFIG.SHAKE_PX,
+                duration: CONFIG.SHAKE_DURATION / 4,
+                repeat: 5,
+                yoyo: true,
+                ease: 'sine.inOut',
+            }, 0);
 
-                tl.to(crackPaths, {
-                    strokeDashoffset: 0,
-                    duration: CRACK_DURATION,
-                    ease: 'power1.inOut',
-                    stagger: 0.01
-                }, 0.02);
+            /* t=0.00 → 0.28s: CRACKS SPREAD OUTWARD
+               Nearest edges start drawing IMMEDIATELY at 0s, farthest edges start at ~0.18s.
+               No single-frame reveal — true radial wave of crack lines.
+            */
+            if (crackPathEls.length > 0) {
+                const maxEdgeDist = crackPathEls.reduce((m, item) => Math.max(m, item.dist), 1);
+                crackPathEls.forEach(({ path, dist }) => {
+                    const len = path.getTotalLength ? path.getTotalLength() : 250;
+                    gsap.set(path, { strokeDasharray: `${len} ${len}`, strokeDashoffset: len });
+
+                    // Stagger start time strictly proportional to radial distance
+                    const startTime = (dist / maxEdgeDist) * (CONFIG.CRACK_DURATION * 0.65);
+                    const drawDuration = 0.08 + (dist / maxEdgeDist) * 0.06;
+
+                    tl.to(path, {
+                        strokeDashoffset: 0,
+                        duration: drawDuration,
+                        ease: 'power2.out',
+                    }, startTime);
+                });
             }
 
-            // 4. Shatter: After a tiny pause of ~0.10s
-            const shatterStartTime = FLASH_DURATION + CRACK_DURATION + PAUSE_DURATION;
+            /* t=0.30s: BREAK (ZERO DEAD WAIT — 0.02s after cracks complete)
+               - Overlay background becomes transparent
+               - Intact preloader DOM hidden
+               - Crack SVG hidden
+            */
+            tl.set(containerRef.current, { backgroundColor: 'transparent' }, CONFIG.BREAK_DELAY);
+            tl.set('.preloader-bg, .bg-aura, .matrix-canvas, .preloader-content', { opacity: 0 }, CONFIG.BREAK_DELAY);
+            tl.set(crackSvg, { opacity: 0 }, CONFIG.BREAK_DELAY);
 
-            // Hide preloader background and canvas as shards take over
-            tl.set([".preloader-bg", ".bg-aura", ".matrix-canvas"], { opacity: 0 }, shatterStartTime);
-            tl.set(cracksSvgRef.current, { opacity: 0 }, shatterStartTime + 0.08);
+            /* t=0.30s: Snappy pop outward (4–12px) in 0.05s */
+            shardEls.forEach((el, i) => {
+                const s = shards[i];
+                const popDist = CONFIG.POP_DIST_MIN + Math.random() * (CONFIG.POP_DIST_MAX - CONFIG.POP_DIST_MIN);
+                tl.to(el, {
+                    x: Math.cos(s.angle) * popDist,
+                    y: Math.sin(s.angle) * popDist,
+                    rotateZ: (Math.random() - 0.5) * 6,
+                    duration: CONFIG.BREAK_POP_DURATION,
+                    ease: 'power2.out',
+                }, CONFIG.BREAK_DELAY);
+            });
 
-            // 6. Screen rumble & depth reveal
-            const mainContent = document.querySelector('.main-content-reveal') || document.querySelector('.app-container');
-            if (mainContent) {
-                tl.to(mainContent, {
-                    x: '+=3',
-                    y: '-=2',
-                    duration: 0.06,
-                    repeat: 4,
-                    yoyo: true,
-                    ease: 'sine.inOut'
-                }, shatterStartTime);
-
-                tl.fromTo(mainContent,
-                    { scale: 1.05 },
-                    { scale: 1, duration: 0.85, ease: 'power3.out' },
-                    shatterStartTime
+            /* t=0.30s: SMOOTH WEBSITE REVEAL (Fades in 0.25 → 1.0 in 0.5s & scales 1.06 → 1.0) */
+            const mainEl = document.querySelector('.main-content-reveal') || document.querySelector('.app-container');
+            if (mainEl) {
+                tl.fromTo(mainEl,
+                    { opacity: CONFIG.REVEAL_FADE_FROM, scale: CONFIG.REVEAL_SCALE_FROM },
+                    {
+                        opacity: 1,
+                        scale: 1,
+                        duration: CONFIG.REVEAL_FADE_DUR,
+                        ease: 'power2.out'
+                    },
+                    CONFIG.BREAK_DELAY
                 );
             }
 
-            // 5. Shards fall away with stagger based on distance from impact point (nearest fall first)
-            const shardElements = shardsStageRef.current ? shardsStageRef.current.querySelectorAll('.glass-shard') : [];
-            const windowHeight = window.innerHeight;
+            /* t=0.35–1.40s: FALL
+               - Center shards start immediately with 0 stagger and fall FAST (0.58s), clearing center.
+               - Farthest shards start with slight stagger (up to 0.20s) and take max ~1.02s.
+               - Every shard falls past the viewport (y += h + 500px).
+               - Shards remain fully bright until the last 25% of their fall.
+            */
+            const maxDistCenter = Math.max(...shards.map(s => s.dist), 1);
+            const fallBaseTime = CONFIG.BREAK_DELAY + CONFIG.BREAK_POP_DURATION; // 0.35s
+            let maxTotalEndTime = fallBaseTime;
 
-            const sortedIndices = shards
-                .map((s, idx) => ({ idx, dist: s.dist, angle: s.angle }))
-                .sort((a, b) => a.dist - b.dist);
+            shardEls.forEach((el, i) => {
+                const s = shards[i];
+                // Distance ratio (0 = center impact, 1 = farthest corner)
+                const distRatio = s.dist / maxDistCenter;
+                const stagger = distRatio * CONFIG.FALL_STAGGER_MAX;
 
-            sortedIndices.forEach((item, i) => {
-                const el = shardElements[item.idx];
-                if (!el) return;
+                // Duration based on shard size
+                const shardDuration = CONFIG.FALL_DUR_SMALL + s.sizeNorm * (CONFIG.FALL_DUR_LARGE - CONFIG.FALL_DUR_SMALL);
 
-                el.style.willChange = 'transform, opacity';
+                // 3D rotations: bigger shards have heavier rotation
+                const rotZ = (Math.random() - 0.5) * (CONFIG.FALL_ROT_Z_SMALL + s.sizeNorm * (CONFIG.FALL_ROT_Z_LARGE - CONFIG.FALL_ROT_Z_SMALL)) * 2;
+                const rotX = (Math.random() - 0.5) * (CONFIG.FALL_ROT_XY_SMALL + s.sizeNorm * (CONFIG.FALL_ROT_XY_LARGE - CONFIG.FALL_ROT_XY_SMALL)) * 2;
+                const rotY = (Math.random() - 0.5) * (CONFIG.FALL_ROT_XY_SMALL + s.sizeNorm * (CONFIG.FALL_ROT_XY_LARGE - CONFIG.FALL_ROT_XY_SMALL)) * 2;
+                const driftX = (Math.random() - 0.5) * CONFIG.FALL_X_DRIFT_MAX * 2;
 
-                const dirX = Math.cos(item.angle);
-                const randomXDrift = dirX * (40 + Math.random() * 120) + (Math.random() - 0.5) * 60;
-                const randomFallY = windowHeight + 250 + Math.random() * 300;
+                const startAt = fallBaseTime + stagger;
+                const endAt = startAt + shardDuration;
+                if (endAt > maxTotalEndTime) maxTotalEndTime = endAt;
 
-                const rotX = (Math.random() - 0.5) * 220;
-                const rotY = (Math.random() - 0.5) * 260;
-                const rotZ = (Math.random() - 0.5) * 180;
-
-                const shardDuration = FALL_DURATION * (0.8 + Math.random() * 0.35);
-                const shardDelay = shatterStartTime + i * 0.018;
-
+                // Full fall well below screen
                 tl.to(el, {
-                    y: randomFallY,
-                    x: randomXDrift,
+                    y: `+=${h + 500}`,
+                    x: `+=${driftX}`,
+                    rotateZ: rotZ,
                     rotateX: rotX,
                     rotateY: rotY,
-                    rotateZ: rotZ,
-                    ease: 'power2.in',
-                    duration: shardDuration
-                }, shardDelay);
+                    ease: 'power3.in',
+                    duration: shardDuration,
+                }, startAt);
 
+                // Opacity fades ONLY in final 25% of fall
                 tl.to(el, {
                     opacity: 0,
-                    duration: 0.35,
-                    ease: 'power1.in'
-                }, shardDelay + shardDuration - 0.35);
+                    duration: shardDuration * 0.25,
+                    ease: 'power1.in',
+                }, startAt + shardDuration * 0.75);
             });
 
-            // 8. Animation ends: Complete & clean up
+            /* Edge SVG lines follow and dissolve as shards clear */
+            tl.to(edgeSvg, {
+                opacity: 0,
+                duration: CONFIG.FALL_DUR_SMALL * 0.7,
+                ease: 'power1.in',
+            }, fallBaseTime + 0.15);
+
+            /* COMPLETE & CLEANUP:
+               Total time capped at ~1.45–1.50s max. Clean DOM removal & scroll restore.
+            */
+            const cleanupTime = Math.min(maxTotalEndTime + 0.05, 1.48);
             tl.call(() => {
+                shardEls.forEach(el => { if (el) el.style.willChange = 'auto'; });
+                if (stage) stage.remove();
+                if (crackSvg) crackSvg.remove();
                 document.body.style.overflow = '';
                 if (onComplete) onComplete();
-            }, null, shatterStartTime + FALL_DURATION + 0.15);
+            }, null, cleanupTime);
         });
-    };
+    }, [onComplete]);
 
+    /* ── JSX ─────────────────────────────────────────────────────────────────── */
     return (
-        <div className="preloader-overlay" ref={containerRef} style={{ perspective: '800px' }}>
+        <div className="preloader-overlay" ref={containerRef} style={{ perspective: '900px' }}>
             <canvas ref={canvasRef} className="matrix-canvas" />
 
-            <div className="preloader-bg"></div>
-            <div className="bg-aura" style={{ opacity: isMobile ? 0.2 : 0.4 }}></div>
+            <div className="preloader-bg" />
+            <div className="bg-aura" style={{ opacity: isMobile ? 0.2 : 0.4 }} />
 
-            {/* Impact Flash Element */}
-            <div className="glass-impact-flash" ref={flashRef} style={{ opacity: 0 }}></div>
+            {/* Impact flash */}
+            <div className="glass-impact-flash" ref={flashRef} style={{ opacity: 0 }} />
 
-            {/* Cracks SVG Layer */}
-            <svg className="glass-cracks-svg" ref={cracksSvgRef}>
-                {cracksData.radials.map((crack, idx) => (
-                    <path
-                        key={`radial-${idx}`}
-                        d={crack.d}
-                        className="glass-crack-line"
-                        strokeWidth={crack.strokeWidth}
-                    />
-                ))}
-                {cracksData.rings.map((ring, idx) => (
-                    <path
-                        key={`ring-${idx}`}
-                        d={ring.d}
-                        className="glass-crack-ring"
-                        strokeWidth={1.2}
-                    />
-                ))}
-            </svg>
+            {/* SVG crack layer — populated dynamically from click outwards */}
+            <svg
+                className="glass-cracks-svg"
+                ref={cracksSvgRef}
+                style={{ position: 'absolute', inset: 0, width: '100vw', height: '100vh', pointerEvents: 'none', zIndex: 20, overflow: 'visible' }}
+            />
 
-            {/* Triangular Shards 3D Perspective Stage */}
-            <div className="glass-shards-stage" ref={shardsStageRef}>
-                {isShattering && shardsPolygons.map((shard, idx) => (
-                    <div
-                        key={`shard-${idx}`}
-                        className="glass-shard"
-                        style={{ clipPath: shard.polygon }}
-                    />
-                ))}
-            </div>
+            {/* 3D shard stage */}
+            <div className="glass-shards-stage" ref={shardsStageRef} />
 
-            {/* Preloader Identity Content & Enter Portfolio Button */}
+            {/* Preloader identity content & Enter Portfolio button */}
             <div className="preloader-content" style={{ opacity: isMobile ? 0 : 1 }}>
                 <div className="identity-reveal" style={{ opacity: isMobile ? 1 : 0 }}>
                     <img src={logoImg} alt="Logo" className="preloader-logo" />
@@ -534,7 +624,11 @@ const Preloader = ({ onComplete }) => {
                 </div>
 
                 <div className="enter-cta" style={{ opacity: isMobile ? 1 : 0 }}>
-                    <button className="btn-enter" onClick={handleEnter} disabled={isExitingRef.current}>
+                    <button
+                        className="btn-enter"
+                        onClick={handleEnter}
+                        disabled={isExitingRef.current}
+                    >
                         Enter Portfolio
                     </button>
                 </div>
