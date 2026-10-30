@@ -112,3 +112,4 @@ const GithubHeatmap = () => {
 };
 
 export default GithubHeatmap;
+

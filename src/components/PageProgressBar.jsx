@@ -29,3 +29,4 @@ const PageProgressBar = () => {
 };
 
 export default PageProgressBar;
+

@@ -33,3 +33,4 @@ const Typewriter = ({ phrases, typingSpeed = 80, deletingSpeed = 40, pauseTime =
 };
 
 export default Typewriter;
+

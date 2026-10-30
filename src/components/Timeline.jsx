@@ -144,3 +144,4 @@ const Timeline = ({ onNavigate }) => {
 };
 
 export default Timeline;
+

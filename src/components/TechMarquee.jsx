@@ -42,3 +42,4 @@ const TechMarquee = () => {
 };
 
 export default TechMarquee;
+

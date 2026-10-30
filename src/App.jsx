@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Preloader from './components/Preloader';
+import GlassShatterIntro from './components/GlassShatterIntro';
 import Navbar from './components/Navbar';
 import Home from './components/Home';
 import About from './components/About';
@@ -22,6 +23,12 @@ function App() {
     const [isLoading, setIsLoading] = useState(() => {
         return !sessionStorage.getItem('portfolio_preloader_seen');
     });
+
+    // Glass Shatter Intro Landing Overlay State
+    const [hasEnteredPortfolio, setHasEnteredPortfolio] = useState(() => {
+        return sessionStorage.getItem('portfolio_shatter_entered') === 'true';
+    });
+
     const [currentPage, setCurrentPage] = useState('home');
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -53,21 +60,26 @@ function App() {
         setIsLoading(false);
     };
 
+    const handleGlassShatterComplete = () => {
+        sessionStorage.setItem('portfolio_shatter_entered', 'true');
+        setHasEnteredPortfolio(true);
+    };
+
     const navigateTo = (pageId) => {
         setCurrentPage(pageId);
         setMobileMenuOpen(false);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    // Lock body scroll when mobile menu or preview modal is open
+    // Lock body scroll when mobile menu, preview modal, or landing overlay is active
     useEffect(() => {
-        if (mobileMenuOpen || previewState.isOpen) {
+        if (mobileMenuOpen || previewState.isOpen || !hasEnteredPortfolio) {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = '';
         }
         return () => { document.body.style.overflow = ''; };
-    }, [mobileMenuOpen, previewState.isOpen]);
+    }, [mobileMenuOpen, previewState.isOpen, hasEnteredPortfolio]);
 
     // UI Tick sound
     const playTick = () => {
@@ -88,7 +100,7 @@ function App() {
 
     useEffect(() => {
         const handleInteraction = (e) => {
-            if (e.target.closest('a, button, .command-item, .contact-card, .hub-card, .nav-island-btn, .filter-btn, .year-tab')) {
+            if (e.target.closest('a, button, .command-item, .contact-card, .hub-card, .nav-island-btn, .filter-btn, .year-tab, .glass-enter-btn')) {
                 playTick();
             }
         };
@@ -121,6 +133,12 @@ function App() {
     return (
         <div className="app-container">
             <CustomCursor />
+
+            {/* Cinematic Glass Shatter Intro Landing Screen (Highest z-index overlay) */}
+            {!hasEnteredPortfolio && (
+                <GlassShatterIntro onComplete={handleGlassShatterComplete} />
+            )}
+
             {isLoading ? (
                 <Preloader onComplete={handlePreloaderComplete} />
             ) : (
