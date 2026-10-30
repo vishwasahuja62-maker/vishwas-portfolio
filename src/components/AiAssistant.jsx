@@ -97,10 +97,8 @@ const AiAssistant = () => {
 
         const apiKey = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.VITE_GROQ_API_KEY;
 
-        // If an API key is provided, query the LLM with full real portfolio system prompt
         if (apiKey) {
             try {
-                // System context giving the LLM accurate facts about Vishwas's actual portfolio
                 const systemPrompt = `You are the authentic AI Portfolio Guide for Vishwas Ahuja.
 Here are the exact facts about Vishwas:
 - Full Name: Vishwas Ahuja
@@ -169,7 +167,7 @@ Give helpful, precise, realistic answers in 2-4 sentences. Always be accurate to
                     }
                 }
             } catch (_) {
-                // If API fails or is rate-limited, seamless fallback to built-in verified engine
+                // Seamless fallback to built-in verified engine
             }
         }
 
@@ -183,7 +181,7 @@ Give helpful, precise, realistic answers in 2-4 sentences. Always be accurate to
         }, 500);
     };
 
-    // Animation Variants
+    // Animation Variants for chat panel
     const panelVariants = {
         hidden: { opacity: 0, y: 30, scale: 0.9, filter: 'blur(10px)' },
         visible: {
@@ -192,39 +190,29 @@ Give helpful, precise, realistic answers in 2-4 sentences. Always be accurate to
             scale: 1,
             filter: 'blur(0px)',
             transition: {
+                filter: { duration: 0.3, ease: 'easeOut' },
                 type: 'spring',
                 damping: 25,
                 stiffness: 300,
+                staggerChildren: 0.1,
+                delayChildren: 0.1
             }
         },
         exit: {
             opacity: 0,
             y: 20,
             scale: 0.95,
-            filter: 'blur(10px)',
             transition: { duration: 0.2 }
         }
     };
 
-    return (
-        <div className="ai-assistant-container">
-            {/* Floating Action Button */}
-            <motion.button
-                className="ai-assistant-trigger"
-                onClick={toggleChat}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                aria-label="Toggle AI Portfolio Guide"
-            >
-                <div className="trigger-icon-wrapper">
-                    {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
-                </div>
-                {!isOpen && (
-                    <span className="trigger-pulse-ring"></span>
-                )}
-            </motion.button>
+    const itemVariants = {
+        hidden: { opacity: 0, y: 10 },
+        visible: { opacity: 1, y: 0 }
+    };
 
-            {/* Chat Window Panel */}
+    return (
+        <div className="ai-assistant-wrapper">
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
@@ -234,87 +222,76 @@ Give helpful, precise, realistic answers in 2-4 sentences. Always be accurate to
                         animate="visible"
                         exit="exit"
                     >
-                        {/* Header */}
-                        <div className="ai-chat-header">
-                            <div className="ai-status-indicator">
-                                <span className="status-dot online"></span>
-                                <div>
-                                    <h4 className="ai-name">Portfolio Intelligence</h4>
-                                    <span className="ai-model-tag">Live Knowledge System</span>
-                                </div>
+                        <motion.div className="chat-header" variants={itemVariants}>
+                            <div>
+                                <h4>AI Portfolio Guide</h4>
+                                <span className="status"><span className="dot green"></span> Live Intelligence</span>
                             </div>
-                            <button className="ai-close-btn" onClick={toggleChat} aria-label="Close Chat">
-                                <X size={18} />
-                            </button>
-                        </div>
+                            <button onClick={toggleChat} className="close-btn" aria-label="Close Chat"><X size={18} /></button>
+                        </motion.div>
 
-                        {/* Message Stream */}
-                        <div className="ai-chat-messages">
-                            {messages.map((msg, index) => (
-                                <motion.div
-                                    key={index}
-                                    className={`ai-message ${msg.role}`}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.3 }}
-                                >
-                                    <div className="message-content">
-                                        <p>{msg.text}</p>
-                                    </div>
-                                </motion.div>
+                        <motion.div className="chat-body" variants={itemVariants}>
+                            {messages.map((msg, i) => (
+                                <div key={i} className={`message ${msg.role}`}>
+                                    {msg.text}
+                                </div>
                             ))}
                             {isTyping && (
-                                <div className="ai-message assistant">
-                                    <div className="typing-indicator">
-                                        <span></span>
-                                        <span></span>
-                                        <span></span>
-                                    </div>
+                                <div className="message assistant typing-indicator">
+                                    <span className="dot"></span>
+                                    <span className="dot"></span>
+                                    <span className="dot"></span>
                                 </div>
                             )}
                             <div ref={messagesEndRef} />
-                        </div>
 
-                        {/* Quick Prompt Suggestions */}
-                        <div className="ai-quick-prompts">
-                            {[
-                                "Salesforce CRM Project",
-                                "GitHub Analyzer",
-                                "Technical Stack",
-                                "Education",
-                                "Contact Info"
-                            ].map((prompt, i) => (
-                                <button
-                                    key={i}
-                                    className="quick-prompt-btn"
-                                    onClick={(e) => handleSend(e, prompt)}
-                                >
-                                    {prompt}
-                                </button>
-                            ))}
-                        </div>
+                            <div className="suggestion-chips">
+                                <button onClick={() => handleSend(null, "Salesforce CRM Project")}>"Salesforce CRM"</button>
+                                <button onClick={() => handleSend(null, "GitHub Profile Analyzer")}>"GitHub Analyzer"</button>
+                                <button onClick={() => handleSend(null, "What is your tech stack?")}>"Tech Stack"</button>
+                                <button onClick={() => handleSend(null, "Education details")}>"Education"</button>
+                            </div>
+                        </motion.div>
 
-                        {/* Input Area */}
-                        <form className="ai-chat-input-area" onSubmit={handleSend}>
+                        <motion.form
+                            onSubmit={handleSend}
+                            className="chat-input-area"
+                            variants={itemVariants}
+                        >
                             <input
                                 type="text"
-                                placeholder="Ask about projects, Salesforce, skills..."
+                                placeholder="Ask about Salesforce, skills, or projects..."
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
-                                className="ai-input"
+                                disabled={isTyping}
                             />
-                            <button
-                                type="submit"
-                                className="ai-send-btn"
-                                disabled={!inputValue.trim()}
-                                aria-label="Send Message"
-                            >
-                                <Send size={16} />
+                            <button type="submit" disabled={!inputValue.trim() || isTyping} aria-label="Send Message">
+                                <Send size={18} />
                             </button>
-                        </form>
+                        </motion.form>
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Floating Action Button (Exact CSS class matching .ai-fab & .ai-assistant-wrapper) */}
+            <motion.button
+                className="ai-fab btn-glow"
+                onClick={toggleChat}
+                initial={{ opacity: 0, scale: 0.5, y: 20 }}
+                animate={{
+                    opacity: 1,
+                    scale: 1,
+                    y: 0,
+                    transition: { delay: 0.3, type: 'spring', damping: 15 }
+                }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                aria-label="Toggle AI Portfolio Guide"
+            >
+                <div className="fab-aura"></div>
+                <MessageSquare size={24} />
+                <span className="fab-text hidden-mobile">Ask about my work</span>
+            </motion.button>
         </div>
     );
 };
