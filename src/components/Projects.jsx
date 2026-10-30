@@ -15,7 +15,8 @@ import {
     Clock, 
     CheckCircle2, 
     SlidersHorizontal,
-    ShieldAlert
+    ShieldAlert,
+    FileText
 } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -41,8 +42,8 @@ const Projects = ({ onPreview }) => {
             id: "net-forensics",
             title: "Net Forensics – Network Traffic Forensics Platform",
             category: "security",
-            repo: "vishwasahuja62-maker/Net-Forensics",
-            badge: "Third-Year Flagship",
+            repo: null,
+            badge: "Third-Year Research Flagship",
             isWip: false,
             problem: "Network security incidents are buried inside massive, noisy PCAP captures with siloed logs. Manual packet-by-packet Wireshark inspection is painfully slow, letting quiet attacks like C2 beaconing, DNS tunneling, and slow exfiltration go undetected.",
             challenge: "Architected a fully asynchronous 4-layer network forensics pipeline (Presentation, FastAPI Application, Celery/Redis Processing, and Hybrid Storage). Reconstructs 5-tuple TCP/UDP streams, computes Shannon entropy on DNS queries, evaluates JA3/JA4 TLS fingerprints, and detects anomalies using Isolation Forest & Z-score models with chain-of-custody SHA-256 evidence hashing.",
@@ -50,9 +51,10 @@ const Projects = ({ onPreview }) => {
             techStack: "Python, FastAPI, Celery, Redis, PyShark, Scapy, Elasticsearch, PostgreSQL, MinIO, scikit-learn, React, TypeScript, D3.js, Docker",
             outcome: "End-to-end PCAP ingestion pipeline capable of parsing millions of packets, detecting 8 discrete threat classes (DNS tunneling, port scans, C2 beaconing, ARP spoofing), and outputting tamper-proof forensic audit reports.",
             lighthouse: { perf: 99, access: 98, best: 100, seo: 98 },
-            github: "https://github.com/vishwasahuja62-maker/Net-Forensics",
-            link: "#",
+            github: null,
+            link: "/Net_Forensics_Research.pdf",
             previewUrl: null,
+            pdfDeck: "/Net_Forensics_Research.pdf",
             snippet: `// Detection Engine: Shannon Entropy & Sliding Window Threat Evaluator
 def detect_dns_tunneling(query_records, entropy_threshold=3.8):
     for record in query_records:
@@ -340,6 +342,18 @@ export function exportAuditLog(activities, format) {
                                         </div>
                                     </div>
                                     <div className="project-links">
+                                        {project.pdfDeck && (
+                                            <a 
+                                                href={project.pdfDeck} 
+                                                target="_blank" 
+                                                rel="noreferrer" 
+                                                className="btn btn-primary btn-sm btn-glow"
+                                                title="Open Research Architecture & Presentation Deck"
+                                            >
+                                                <FileText size={14} />
+                                                <span>Research Deck (PDF)</span>
+                                            </a>
+                                        )}
                                         {project.previewUrl && (
                                             <button 
                                                 className="btn btn-primary btn-sm btn-glow"
@@ -352,10 +366,12 @@ export function exportAuditLog(activities, format) {
                                         )}
                                         {project.github ? (
                                             <a href={project.github} className="icon-link" title="Source Code" target="_blank" rel="noreferrer"><Github size={20} /></a>
+                                        ) : project.id === "net-forensics" ? (
+                                            <span className="cloud-crm-tag" title="Academic Cybersecurity Architecture">Research Architecture</span>
                                         ) : (
                                             <span className="cloud-crm-tag" title="Deployed on Salesforce Cloud CRM">Salesforce Cloud</span>
                                         )}
-                                        {project.id !== "analyzer" && project.link && project.link !== "#" && (
+                                        {project.id !== "analyzer" && project.id !== "net-forensics" && project.link && project.link !== "#" && (
                                             <a href={project.link} className="icon-link" title="Live Site" target="_blank" rel="noreferrer"><ExternalLink size={20} /></a>
                                         )}
                                     </div>
@@ -435,6 +451,18 @@ export function exportAuditLog(activities, format) {
                                                     </div>
                                                 </div>
                                                 <div className="project-links">
+                                                    {expandedProject.pdfDeck && (
+                                                        <a 
+                                                            href={expandedProject.pdfDeck} 
+                                                            target="_blank" 
+                                                            rel="noreferrer" 
+                                                            className="btn btn-primary btn-sm btn-glow"
+                                                            title="Open Research Architecture & Presentation Deck"
+                                                        >
+                                                            <FileText size={14} />
+                                                            <span>Research Deck (PDF)</span>
+                                                        </a>
+                                                    )}
                                                     {expandedProject.previewUrl && (
                                                         <button 
                                                             className="btn btn-primary btn-sm btn-glow"
@@ -445,10 +473,12 @@ export function exportAuditLog(activities, format) {
                                                     )}
                                                     {expandedProject.github ? (
                                                         <a href={expandedProject.github} className="icon-link" title="Source Code" target="_blank" rel="noreferrer"><Github size={20} /></a>
+                                                    ) : expandedProject.id === "net-forensics" ? (
+                                                        <span className="cloud-crm-tag" title="Academic Cybersecurity Architecture">Research Architecture</span>
                                                     ) : (
                                                         <span className="cloud-crm-tag" title="Deployed on Salesforce Cloud CRM">Salesforce Cloud</span>
                                                     )}
-                                                    {expandedProject.id !== "analyzer" && expandedProject.link && expandedProject.link !== "#" && (
+                                                    {expandedProject.id !== "analyzer" && expandedProject.id !== "net-forensics" && expandedProject.link && expandedProject.link !== "#" && (
                                                         <a href={expandedProject.link} className="icon-link" title="Live Site" target="_blank" rel="noreferrer"><ExternalLink size={20} /></a>
                                                     )}
                                                 </div>
