@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- Dark background -->
+  <rect width="1200" height="630" fill="#0d0f12"/>
+
+  <!-- Subtle grid -->
+  <defs>
+    <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(6,182,212,0.08)" stroke-width="1"/>
+    </pattern>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(6,182,212,0.12)"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <ellipse cx="600" cy="315" rx="500" ry="300" fill="url(#glow)"/>
+
+  <!-- Top status badge -->
+  <rect x="465" y="80" width="270" height="36" rx="18" fill="rgba(6,182,212,0.12)" stroke="rgba(6,182,212,0.4)" stroke-width="1.5"/>
+  <circle cx="486" cy="98" r="5" fill="#06b6d4"/>
+  <text x="500" y="104" font-family="monospace" font-size="14" fill="#06b6d4" letter-spacing="1">OPEN TO OPPORTUNITIES</text>
+
+  <!-- Main name -->
+  <text x="600" y="210" font-family="Arial Black, sans-serif" font-size="72" font-weight="900" fill="#f8fafc" text-anchor="middle">Vishwas Ahuja</text>
+
+  <!-- Cyan accent line -->
+  <rect x="460" y="230" width="280" height="3" rx="2" fill="url(#accentGrad)"/>
+  <defs>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Subtitle -->
+  <text x="600" y="290" font-family="Arial, sans-serif" font-size="26" fill="#94a3b8" text-anchor="middle">Full-Stack Engineer · 3rd Year BTech CSE (Data Science)</text>
+  <text x="600" y="330" font-family="Arial, sans-serif" font-size="22" fill="#64748b" text-anchor="middle">Manav Rachna University · Minor in Data Science</text>
+
+  <!-- Tech pills -->
+  <rect x="230" y="380" width="120" height="38" rx="19" fill="rgba(59,130,246,0.15)" stroke="rgba(59,130,246,0.4)" stroke-width="1.5"/>
+  <text x="290" y="404" font-family="monospace" font-size="15" fill="#60a5fa" text-anchor="middle">React 18</text>
+
+  <rect x="370" y="380" width="120" height="38" rx="19" fill="rgba(6,182,212,0.15)" stroke="rgba(6,182,212,0.4)" stroke-width="1.5"/>
+  <text x="430" y="404" font-family="monospace" font-size="15" fill="#06b6d4" text-anchor="middle">Supabase</text>
+
+  <rect x="510" y="380" width="120" height="38" rx="19" fill="rgba(139,92,246,0.15)" stroke="rgba(139,92,246,0.4)" stroke-width="1.5"/>
+  <text x="570" y="404" font-family="monospace" font-size="15" fill="#a78bfa" text-anchor="middle">Salesforce</text>
+
+  <rect x="650" y="380" width="120" height="38" rx="19" fill="rgba(6,182,212,0.15)" stroke="rgba(6,182,212,0.4)" stroke-width="1.5"/>
+  <text x="710" y="404" font-family="monospace" font-size="15" fill="#06b6d4" text-anchor="middle">FastAPI</text>
+
+  <rect x="790" y="380" width="120" height="38" rx="19" fill="rgba(16,185,129,0.15)" stroke="rgba(16,185,129,0.4)" stroke-width="1.5"/>
+  <text x="850" y="404" font-family="monospace" font-size="15" fill="#34d399" text-anchor="middle">Python</text>
+
+  <!-- Bottom URL -->
+  <text x="600" y="530" font-family="monospace" font-size="18" fill="rgba(6,182,212,0.7)" text-anchor="middle">vishwas-ahuja-portfolio.netlify.app</text>
+
+  <!-- Corner decorative brackets -->
+  <path d="M 40 40 L 40 80 L 80 80" fill="none" stroke="rgba(6,182,212,0.4)" stroke-width="2"/>
+  <path d="M 1160 40 L 1160 80 L 1120 80" fill="none" stroke="rgba(6,182,212,0.4)" stroke-width="2"/>
+  <path d="M 40 590 L 40 550 L 80 550" fill="none" stroke="rgba(6,182,212,0.4)" stroke-width="2"/>
+  <path d="M 1160 590 L 1160 550 L 1120 550" fill="none" stroke="rgba(6,182,212,0.4)" stroke-width="2"/>
+</svg>
