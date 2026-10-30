@@ -234,7 +234,7 @@ const Hero = ({ onNavigate }) => {
                                 See My Projects <ChevronRight size={18} style={{ marginLeft: '4px' }} />
                             </a>
                         )}
-                        <a href="/cv_vishwas_btech.pdf" download="cv_vishwas_btech.pdf" className="btn btn-secondary btn-underline">
+                        <a href="/Vishwas_CV.pdf" download="Vishwas_CV.pdf" target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-underline">
                             Get My Resume
                         </a>
                     </div>

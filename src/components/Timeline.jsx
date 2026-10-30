@@ -1,12 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { 
-    School, 
-    GraduationCap, 
-    Briefcase, 
-    GitMerge, 
-    Sparkles, 
-    ExternalLink, 
+import {
+    School,
+    GraduationCap,
+    Briefcase,
+    GitMerge,
+    Sparkles,
+    ExternalLink,
     Calendar,
     ArrowRight
 } from 'lucide-react';
@@ -139,7 +139,7 @@ const Timeline = ({ onNavigate }) => {
 
                 {onNavigate && (
                     <div className="timeline-footer-cta">
-                        <button 
+                        <button
                             className="btn btn-secondary btn-glow"
                             onClick={() => onNavigate('experience')}
                         >
