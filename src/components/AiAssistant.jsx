@@ -7,7 +7,7 @@ const AiAssistant = () => {
     const [messages, setMessages] = useState([
         { 
             role: 'assistant', 
-            text: 'Hello! I am Vishwas Ahuja’s Live AI Portfolio Intelligence Guide, powered by Groq. Ask me in-depth questions about his Salesforce CRM engineering, custom architectures, tech stack, or professional background!' 
+            text: 'Hey! I’m Vishwas Ahuja’s AI Guide. Feel free to ask me about his Salesforce CRM engineering, custom architectures, tech stack, or background!' 
         }
     ]);
     const [inputValue, setInputValue] = useState('');
@@ -37,60 +37,39 @@ const AiAssistant = () => {
 
         const apiKey = import.meta.env.VITE_GROQ_API_KEY || import.meta.env.VITE_GEMINI_API_KEY;
 
-        const systemPrompt = `You are the authentic, highly intelligent and articulate AI Portfolio Guide for Vishwas Ahuja. 
-Your purpose is to answer recruiters, hiring managers, and visitors with rich, detailed, comprehensive, and technically grounded answers about Vishwas.
-DO NOT give shallow or 1-2 sentence replies. Provide thoughtful, well-structured, in-depth breakdowns with bullet points and clear context.
+        const systemPrompt = `You are the personal AI Portfolio Guide on Vishwas Ahuja's website.
+CRITICAL TONE & STYLE RULES:
+- Talk like a smart, knowledgeable tech colleague in a fast-paced chat—natural, direct, and conversational.
+- NEVER write stiff textbook essays, boring documentation headings (e.g. do NOT use headings like "### 1. Architectural Overview: 3-Tier Enterprise Cloud" or "Presentation Tier").
+- Avoid endless bullet lists or generic fluff.
+- Deliver lively, sharp, and engaging responses in 2 to 3 smooth paragraphs with real context, human problem-solving, and concrete outcomes.
 
-Here are the VERIFIED core facts about Vishwas Ahuja:
-1. Identity & Profile:
-   - Full Name: Vishwas Ahuja
-   - Role: Aspiring Software Engineer & B.Tech CSE (Core) student with Minor in Data Science at Manav Rachna University (Batch 2024–2028).
-   - Academic Excellence: Dean's List and Vice-Chancellor (VC) List Awardee. Class XII (CBSE): 90.8%, Class X (CBSE): 94%.
-   - Core Philosophy: "Engineering Over Replicating" — architectures built from scratch with production-grade engineering principles.
+Core Verified Facts about Vishwas Ahuja:
+1. Student Placement Management System (Salesforce Cloud CRM):
+   - The university was managing campus drives on messy, scattered spreadsheets with lost records and slow communication.
+   - Vishwas architected a native Salesforce CRM platform with custom Lightning Web Components (LWC) tailored for students (application tracking) and recruiters (fast candidate filtering).
+   - Under the hood, custom Apex controllers and record-triggered Salesforce Flows automatically validated GPA/major eligibility and handled interview round transitions.
+   - Result: Slashed administrative overhead by 60% and gave university directors real-time KPI analytics.
 
-2. Flagship Project 1: Student Placement Management System (Salesforce Cloud CRM)
-   - Architecture: Native 3-tier enterprise cloud architecture on Salesforce CRM Cloud replacing legacy chaotic spreadsheet tracking.
-   - Frontend/UI: Custom Lightning Web Components (LWC) with responsive recruiter and student interfaces.
-   - Backend & Logic: Automated Apex Controllers, triggers, and SOQL queries handling eligibility verification and interview pipeline transitions.
-   - Automation: Record-triggered Salesforce Flows for instant status updates, candidate shortlisting, and notification dispatch.
-   - Impact: Reduced manual administrative and application processing overhead by 60%, delivering real-time executive KPI analytics dashboards directly to university placement directors.
+2. GitHub Profile Analyzer:
+   - An engineering dashboard querying the GitHub REST API.
+   - Uses a custom 1-1000 Developer Score algorithm weighting Stars (3x), Repositories (2x), and Followers (2x), plus account longevity and consistency multipliers.
 
-3. Flagship Project 2: GitHub Profile Analyzer
-   - Architecture: Node.js and Express backend communicating directly with the GitHub REST API.
-   - Engineering Logic: Computes a proprietary 1–1000 weighted "Developer Score". The weighting matrix accounts for Stars (3x), Repositories (2x), Followers (2x), paired with account longevity multipliers and organizational consistency.
-   - Visualization: Real-time radar maps and interactive data visualizers comparing developers.
+3. Real-Time Kanban Board:
+   - Built with React 18, Supabase, and PostgreSQL.
+   - Features sub-100ms real-time state synchronization across active sessions via WebSockets, with strict Row-Level Security (RLS) data isolation.
 
-4. Flagship Project 3: Real-Time Kanban Task Manager
-   - Stack: React 18 frontend paired with Supabase and PostgreSQL.
-   - Real-Time Synchronization: Uses PostgreSQL real-time replication channels via WebSockets for sub-100ms state updates across multiple active browser sessions.
-   - Security: Implements strict Row-Level Security (RLS) policies guaranteeing total user data privacy with optimistic UI updates.
+4. Neon Snake Game PWA:
+   - High-performance vanilla JavaScript PWA with sub-1ms input latency.
+   - Built with Illegal Turn Protection logic to prevent 180° self-collisions and full offline Service Worker caching.
 
-5. Flagship Project 4: Neon Snake Game PWA
-   - Tech: Pure zero-dependency Vanilla JavaScript, HTML5 Canvas.
-   - Game Loop: Sub-1ms input latency frame loop featuring custom "Illegal Turn Protection" logic preventing 180° self-collisions.
-   - Offline Capability: Full PWA support with custom Service Worker caching.
-
-6. Skills & Tooling:
-   - Languages: JavaScript (ES6+), Python, Java, C++, Apex, SQL
-   - Frontend: React 18, Vite, TailwindCSS, GSAP, Framer Motion
-   - Cloud & Database: Salesforce Cloud CRM, LWC, Apex, Supabase, PostgreSQL, REST APIs
-   - Tooling: Git, GitHub, VS Code, SFDX CLI, Postman
-
-7. Contact & Links:
-   - Primary Email: vishwasahuja62@gmail.com
-   - University Email: vishwas_ahuja24@mru.ac.in
-   - Phone: +91-8882449462
-   - LinkedIn: https://www.linkedin.com/in/vishwas-ahuja-6b5225327
-   - GitHub: https://github.com/vishwasahuja62-maker
-   - Resume: Downloadable as cv_vishwas_btech.pdf directly on the site.
-
-Tone: Professional, enthusiastic, technically insightful, articulate, and structured. Always highlight his real accomplishments.`;
+5. Education & Background:
+   - B.Tech CSE (Core) with a Minor in Data Science at Manav Rachna University (2024–2028). Dean's List and VC List Awardee.
+   - Scored 90.8% in Class XII and 94% in Class X.
+   - Contact: vishwasahuja62@gmail.com | +91-8882449462 | LinkedIn: linkedin.com/in/vishwas-ahuja-6b5225327`;
 
         try {
             if (apiKey) {
-                // Determine model: prioritize Groq's high-capacity Qwen model
-                const modelToUse = "qwen/qwen3.8-27b";
-
                 const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                     method: 'POST',
                     headers: {
@@ -98,13 +77,13 @@ Tone: Professional, enthusiastic, technically insightful, articulate, and struct
                         'Authorization': `Bearer ${apiKey.trim()}`
                     },
                     body: JSON.stringify({
-                        model: modelToUse,
+                        model: "qwen/qwen3.8-27b",
                         messages: [
                             { role: "system", content: systemPrompt },
-                            ...newMessages.slice(-8).map(m => ({ role: m.role, content: m.text }))
+                            ...newMessages.slice(-6).map(m => ({ role: m.role, content: m.text }))
                         ],
                         temperature: 0.7,
-                        max_tokens: 600
+                        max_tokens: 380
                     })
                 });
 
@@ -118,31 +97,24 @@ Tone: Professional, enthusiastic, technically insightful, articulate, and struct
                         setIsTyping(false);
                         return;
                     }
-                } else {
-                    const errData = await response.json().catch(() => ({}));
-                    console.warn("Groq API warning:", errData);
                 }
             }
         } catch (err) {
             console.error("AI Assistant network error:", err);
         }
 
-        // Failsafe rich response generator if API is momentarily unreachable
+        // Conversational natural fallback
         setTimeout(() => {
             setMessages(prev => [...prev, {
                 role: 'assistant',
-                text: `Vishwas Ahuja is an aspiring Software Engineer (B.Tech CSE with Data Science minor at Manav Rachna University, Dean's List). 
+                text: `Vishwas is an aspiring software engineer pursuing B.Tech CSE (Data Science minor) at Manav Rachna University, recognized on the Dean's List.
 
-Here is an architectural breakdown of what he builds:
-• **Salesforce CRM Placement System**: Enterprise cloud app with custom Lightning Web Components (LWC), Apex triggers, and automated Salesforce Flows that reduced placement overhead by 60%.
-• **GitHub Profile Analyzer**: Node.js engine calculating a weighted 1-1000 Developer Score (Stars 3x, Repos 2x, Followers 2x) via GitHub REST APIs.
-• **Real-Time Kanban Board**: React 18 + Supabase real-time websocket sync (<100ms latency) and Row-Level Security (RLS).
-• **Skills**: React 18, Salesforce CRM, Apex, LWC, Python, Java, C++, PostgreSQL, TailwindCSS.
+His flagship project is an enterprise **Student Placement Management System** on Salesforce CRM Cloud, where he replaced messy campus drive spreadsheets with automated Lightning Web Components (LWC), custom Apex eligibility logic, and Salesforce Flows—slashing processing time by 60%.
 
-Reach out directly at **vishwasahuja62@gmail.com** or **+91-8882449462**!`
+He has also engineered a **GitHub Profile Analyzer** with a weighted 1-1000 Developer Score algorithm and a **Real-Time Kanban Board** with sub-100ms Supabase websocket sync. You can reach him directly at **vishwasahuja62@gmail.com**!`
             }]);
             setIsTyping(false);
-        }, 600);
+        }, 500);
     };
 
     // Animation Variants
@@ -188,7 +160,7 @@ Reach out directly at **vishwasahuja62@gmail.com** or **+91-8882449462**!`
                         <motion.div className="chat-header" variants={itemVariants}>
                             <div>
                                 <h4>AI Portfolio Guide</h4>
-                                <span className="status"><span className="dot green"></span> Live LLM Intelligence</span>
+                                <span className="status"><span className="dot green"></span> Live Intelligence</span>
                             </div>
                             <button onClick={toggleChat} className="close-btn" aria-label="Close Chat"><X size={18} /></button>
                         </motion.div>
@@ -211,17 +183,17 @@ Reach out directly at **vishwasahuja62@gmail.com** or **+91-8882449462**!`
                             <div ref={messagesEndRef} />
 
                             <div className="suggestion-chips">
-                                <button onClick={() => handleSend(null, "Explain the architecture of Vishwas's Salesforce CRM Placement project.")}>
-                                    "Salesforce CRM Architecture"
+                                <button onClick={() => handleSend(null, "Tell me about your Salesforce CRM Placement project.")}>
+                                    "Salesforce CRM Project"
                                 </button>
-                                <button onClick={() => handleSend(null, "How does the GitHub Profile Analyzer calculate its developer score?")}>
+                                <button onClick={() => handleSend(null, "How does the GitHub Profile Analyzer work?")}>
                                     "GitHub Scoring Logic"
                                 </button>
-                                <button onClick={() => handleSend(null, "What is Vishwas's full tech stack and academic background?")}>
+                                <button onClick={() => handleSend(null, "What is your core tech stack and academic background?")}>
                                     "Tech Stack & Education"
                                 </button>
-                                <button onClick={() => handleSend(null, "How can I contact or interview Vishwas?")}>
-                                    "Contact & Interview"
+                                <button onClick={() => handleSend(null, "How can I contact or hire Vishwas?")}>
+                                    "Contact Info"
                                 </button>
                             </div>
                         </motion.div>
@@ -233,7 +205,7 @@ Reach out directly at **vishwasahuja62@gmail.com** or **+91-8882449462**!`
                         >
                             <input
                                 type="text"
-                                placeholder="Ask any in-depth technical question..."
+                                placeholder="Ask any question about his work..."
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
                                 disabled={isTyping}
