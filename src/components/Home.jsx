@@ -27,9 +27,9 @@ const Home = ({ onNavigate, onPreview }) => {
             id: 'projects',
             title: 'Projects & Case Studies',
             subtitle: 'Flagships & Prototypes',
-            desc: 'Explore ElevateHire, My True Companion, Zero-Cost CRM contributions, Java Subscription Manager, and GitHub Profile Analyzer.',
+            desc: 'Explore Net Forensics, ElevateHire, Salesforce Placement CRM, Zero-Cost CRM contributions, and GitHub Profile Analyzer.',
             icon: <FolderGit2 size={24} />,
-            badge: '7 Featured',
+            badge: '8 Featured',
             color: 'cyan'
         },
         {
