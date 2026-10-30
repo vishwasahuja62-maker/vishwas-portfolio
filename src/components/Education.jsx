@@ -7,9 +7,9 @@ const Education = () => {
         {
             institution: "Manav Rachna University",
             degree: "B.Tech in Computer Science Engineering (Core)",
-            specialization: "Minor: Data Science",
+            specialization: "Minor: Data Science (3rd Year Student)",
             year: "2024 – Present (Exp. 2028)",
-            grade: "Undergraduate",
+            grade: "Undergraduate (3rd Year)",
             highlight: "Dean's List & VC List Awardee"
         },
         {

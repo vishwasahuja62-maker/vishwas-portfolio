@@ -34,10 +34,10 @@ const timelineEvents = [
     },
     {
         year: '2024 – Present (Exp. 2028)',
-        period: 'Undergraduate Degree',
-        title: 'B.Tech in Computer Science & Engineering',
+        period: 'Undergraduate Degree (3rd Year)',
+        title: 'B.Tech in Computer Science & Engineering (3rd Year)',
         subtitle: 'Manav Rachna University, Faridabad (Minor in Data Science)',
-        desc: 'Maintained outstanding academic excellence earning honors on both the Dean\'s List and Vice Chancellor\'s (VC) List. Specializing in full-stack engineering, algorithms, and distributed data systems.',
+        desc: 'Currently in 3rd Year. Maintained outstanding academic excellence earning honors on both the Dean\'s List and Vice Chancellor\'s (VC) List. Specializing in full-stack engineering, algorithms, and distributed data systems.',
         tag: 'University',
         icon: <GraduationCap size={20} />,
         color: 'cyan'

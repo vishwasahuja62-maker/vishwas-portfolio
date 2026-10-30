@@ -221,7 +221,7 @@ const Hero = ({ onNavigate }) => {
                     </div>
 
                     <p className="hero-subtitle">
-                        BTech CSE (Data Science) student building full-stack <strong className="neon-text">React</strong> apps, integrating <strong className="neon-text">real AI</strong> APIs, and deploying <strong className="neon-text">live</strong> — while most are still watching tutorials.
+                        3rd-Year BTech CSE (Data Science) student building full-stack <strong className="neon-text">React</strong> apps, integrating <strong className="neon-text">real AI</strong> APIs, and deploying <strong className="neon-text">live</strong> — while most are still watching tutorials.
                     </p>
 
                     <div className="hero-ctas">

@@ -18,7 +18,7 @@ const Deployment = () => {
                         <h3 className="deploy-subtitle">Powered by Netlify Edge Network</h3>
 
                         <p className="deploy-lead">
-                            As a BTech student, I treat deployment as a first-class citizen. I don't just "push code" — I manage infrastructure.
+                            As a 3rd-year BTech student, I treat deployment as a first-class citizen. I don't just "push code" — I manage infrastructure.
                         </p>
 
                         <div className="infrastructure-cards">

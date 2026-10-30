@@ -69,7 +69,7 @@ Core Verified Facts about Vishwas Ahuja:
    - Built with Illegal Turn Protection logic to prevent 180° self-collisions and full offline Service Worker caching.
 
 6. Education & Background:
-   - B.Tech CSE (Core) with a Minor in Data Science at Manav Rachna University (2024–2028). Dean's List and VC List Awardee.
+   - Currently a 3rd-Year B.Tech CSE (Core) student with a Minor in Data Science at Manav Rachna University (2024–2028). Dean's List and VC List Awardee.
    - Class XII (2022–2024): 90.8% from Tagore Academy Public School.
    - Class X (2010–2022): 94% from St. Anthony's Senior Secondary School.
    - Contact: vishwasahuja62@gmail.com | +91-8882449462 | LinkedIn: linkedin.com/in/vishwas-ahuja-6b5225327`;
