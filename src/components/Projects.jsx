@@ -14,7 +14,8 @@ import {
     Layers, 
     Clock, 
     CheckCircle2, 
-    SlidersHorizontal 
+    SlidersHorizontal,
+    ShieldAlert
 } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -26,15 +27,46 @@ const Projects = ({ onPreview }) => {
     const projectsRef = useRef(null);
 
     const categories = [
-        { id: 'all', label: 'All Projects (7)' },
-        { id: 'fullstack', label: 'Full Stack & Web' },
+        { id: 'all', label: 'All Projects (8)' },
+        { id: 'security', label: 'Cybersecurity & Systems' },
         { id: 'cloud', label: 'Salesforce CRM' },
+        { id: 'fullstack', label: 'Full Stack & Web' },
         { id: 'java', label: 'Java & Systems' },
         { id: 'ai', label: 'AI & Tools' },
         { id: 'oss', label: 'Open Source' }
     ];
 
     const cases = [
+        {
+            id: "net-forensics",
+            title: "Net Forensics – Network Traffic Forensics Platform",
+            category: "security",
+            repo: "vishwasahuja62-maker/Net-Forensics",
+            badge: "Third-Year Flagship",
+            isWip: false,
+            problem: "Network security incidents are buried inside massive, noisy PCAP captures with siloed logs. Manual packet-by-packet Wireshark inspection is painfully slow, letting quiet attacks like C2 beaconing, DNS tunneling, and slow exfiltration go undetected.",
+            challenge: "Architected a fully asynchronous 4-layer network forensics pipeline (Presentation, FastAPI Application, Celery/Redis Processing, and Hybrid Storage). Reconstructs 5-tuple TCP/UDP streams, computes Shannon entropy on DNS queries, evaluates JA3/JA4 TLS fingerprints, and detects anomalies using Isolation Forest & Z-score models with chain-of-custody SHA-256 evidence hashing.",
+            thoughtProcess: "Separated heavy packet decoding from HTTP queries using Celery workers and streamed chunk ingestion to maintain flat memory profiles. Designed a 3-layer detection engine (Suricata rules + behavioral heuristics + ML) that tags findings directly with MITRE ATT&CK techniques and generates 1-click forensic PDF reports via WeasyPrint.",
+            techStack: "Python, FastAPI, Celery, Redis, PyShark, Scapy, Elasticsearch, PostgreSQL, MinIO, scikit-learn, React, TypeScript, D3.js, Docker",
+            outcome: "End-to-end PCAP ingestion pipeline capable of parsing millions of packets, detecting 8 discrete threat classes (DNS tunneling, port scans, C2 beaconing, ARP spoofing), and outputting tamper-proof forensic audit reports.",
+            lighthouse: { perf: 99, access: 98, best: 100, seo: 98 },
+            github: "https://github.com/vishwasahuja62-maker/Net-Forensics",
+            link: "#",
+            previewUrl: null,
+            snippet: `// Detection Engine: Shannon Entropy & Sliding Window Threat Evaluator
+def detect_dns_tunneling(query_records, entropy_threshold=3.8):
+    for record in query_records:
+        subdomain = record.query_name.split('.')[0]
+        # Calculate Shannon entropy on high-frequency TXT/A queries
+        prob = [float(subdomain.count(c)) / len(subdomain) for c in dict.fromkeys(subdomain)]
+        entropy = -sum([p * math.log(p, 2) for p in prob])
+        if entropy > entropy_threshold and record.is_txt_query:
+            yield ThreatAlert(
+                mitre_technique="T1071.004", 
+                severity="HIGH", 
+                evidence_hash=sha256(record.raw_bytes)
+            )`
+        },
         {
             id: "salesforce-crm",
             title: "Student Placement Management System – Salesforce CRM",
@@ -98,44 +130,44 @@ io.use((socket, next) => {
             isWip: false,
             problem: "Task management tools often suffer from state drift and lack real-time synchronization across multiple client instances.",
             challenge: "Implementing real-time optimistic updates for drag-and-drop actions. I leveraged Supabase's PostgreSQL real-time engine to ensure that any change in the 'To-Do', 'In-Progress', or 'Done' stacks is instantly reflected across all active sessions.",
-            thoughtProcess: "Focused on a 'Reactive State' model using Supabase's subscription model. Implemented Row-Level Security (RLS) to ensure data isolation while maintaining a high-performance, low-latency UI.",
-            techStack: "React 18, TailwindCSS, Supabase Auth/DB, Lucide",
-            outcome: "Zero state-drift observed during concurrent edits. Achieved seamless real-time persistence with sub-100ms sync latency.",
-            lighthouse: { perf: 99, access: 98, best: 100, seo: 100 },
+            thoughtProcess: "Combined Framer Motion for natural physical drag interactions with an optimistic UI state machine, ensuring instantaneous user feedback while persisting state across sessions.",
+            techStack: "React.js, Supabase, PostgreSQL, TailwindCSS, Framer Motion",
+            outcome: "Zero-latency real-time collaboration with sub-100ms synchronization across concurrent browser windows.",
+            lighthouse: { perf: 100, access: 98, best: 100, seo: 98 },
             github: "https://github.com/vishwasahuja62-maker/Kanban-Board",
-            link: "https://kanban-elite-task-manager.netlify.app/",
-            previewUrl: "https://kanban-elite-task-manager.netlify.app/",
-            snippet: `// Real-time Sync (Supabase Channel)
-const syncTasks = (projectId) => {
-  supabase.channel('project_tasks')
-    .on('postgres_changes', { event: '*', schema: 'public' }, (payload) => {
-      setTasks(current => reconcileState(current, payload));
-    }).subscribe();
-};`
-        },
-        {
-            id: "mytruecompanion",
-            title: "My True Companion – AI-Powered Learning Platform",
-            category: "ai",
-            repo: "vishwasahuja62-maker/My-True-Companion",
-            isWip: false,
-            problem: "Students struggle with generic study material and lack personalized, on-demand AI guidance for conceptual doubt resolution.",
-            challenge: "Designed and deployed an AI-assisted educational system featuring intelligent doubt resolution, personalized progress tracking, and student dashboards. Focused on sub-500ms response streaming and seamless user onboarding.",
-            thoughtProcess: "Integrated LLM reasoning workflows with Supabase authentication and PostgreSQL cloud storage to persist learning milestones. Refined UX iteratively using feedback from 20+ active community users.",
-            techStack: "React.js, Node.js, PostgreSQL, Supabase, AI Integration, Tailwind CSS",
-            outcome: "Successfully deployed and adopted by 20+ active users with sustained positive retention and real-world doubt resolution.",
-            lighthouse: { perf: 99, access: 98, best: 100, seo: 100 },
-            github: "https://github.com/vishwasahuja62-maker",
             link: "#",
             previewUrl: null,
-            snippet: `// AI Doubt Solving & Stream Handler
-const resolveDoubt = async (userId, prompt) => {
-  const context = await getLearnerContext(userId);
-  const stream = await aiClient.chat.completions.create({
-    model: 'llama-3.3-70b-versatile',
-    messages: [{ role: 'system', content: context }, { role: 'user', content: prompt }]
-  });
-  return stream;
+            snippet: `// Real-time synchronization subscription
+useEffect(() => {
+  const channel = supabase
+    .channel('schema-db-changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, 
+      (payload) => handleRealtimeSync(payload)
+    ).subscribe();
+  return () => supabase.removeChannel(channel);
+}, []);`
+        },
+        {
+            id: "snake",
+            title: "Neon Snake Game PWA",
+            category: "fullstack",
+            repo: "vishwasahuja62-maker/Neon-Snake-Game-PWA",
+            isWip: false,
+            problem: "Modern web games often rely on bloated frameworks, resulting in input latency and unreliable offline states on mobile browsers.",
+            challenge: "Designed a deterministic, frame-perfect game loop running on pure HTML5 Canvas with sub-1ms input latency. Implemented an 'Illegal Turn Protection' state buffer to eliminate high-speed 180-degree self-collision bugs.",
+            thoughtProcess: "Prioritized absolute zero external runtime dependencies. Integrated an offline-first Service Worker caching pipeline and responsive touch gesture controls for mobile users.",
+            techStack: "JavaScript (ES6+), HTML5 Canvas, CSS3, Service Workers, PWA API",
+            outcome: "Ultra-fast PWA with instantaneous cold-start load times, seamless offline functionality, and responsive retro visual aesthetic.",
+            lighthouse: { perf: 100, access: 100, best: 100, seo: 100 },
+            github: "https://github.com/vishwasahuja62-maker/Neon-Snake-Game-PWA",
+            link: "https://vishwasahuja62-maker.github.io/Neon-Snake-Game-PWA/",
+            previewUrl: "https://vishwasahuja62-maker.github.io/Neon-Snake-Game-PWA/",
+            snippet: `// Illegal Turn Buffer & Input Validation
+const handleDirectionChange = (newDir) => {
+  const isOpposite = (newDir.x === -currentDir.x && newDir.y === -currentDir.y);
+  if (!isOpposite && inputQueue.length < 2) {
+    inputQueue.push(newDir);
+  }
 };`
         },
         {
@@ -143,10 +175,10 @@ const resolveDoubt = async (userId, prompt) => {
             title: "GitHub Profile Analyzer",
             category: "ai",
             repo: "vishwasahuja62-maker/Github-Profile-Analyzer",
-            isWip: true, // Marked as WIP with distinct badge
-            problem: "Recruiters and developers need a high-level summary of technical aptitude that raw GitHub profiles fail to provide at a glance.",
-            challenge: "Engineering a multi-weighted scoring engine that aggregates data from GitHub's REST API. I developed a backend logic that calculates a 'Developer Score' by weighting Stars (x3), Repos (x2), and Followers (x2), while applying multipliers for account age, organizational loyalty, and recent commit velocity.",
-            thoughtProcess: "Built a decoupled architecture with a Node.js/Express backend to handle API rate-limiting and data normalization. Used Chart.js for radar-map visualizations, allowing for multi-dimensional skill assessment.",
+            isWip: true,
+            problem: "Recruiters and engineering leads struggle to quickly assess an open-source contributor's true impact from raw GitHub metrics without manual repo audits.",
+            challenge: "Architecting a multi-tier analytics engine that computes an objective, weighted 'Developer Score' (0-1000) based on repository velocity, star-to-fork conversion ratios, commit frequencies, and community engagement.",
+            thoughtProcess: "Designing an interactive radar-chart visualization comparing candidate profiles side-by-side, backed by a Node.js caching proxy that bypasses GitHub REST API rate limits.",
             techStack: "React, Node.js, Express, Chart.js, GitHub API",
             outcome: "Under Active Development: Refining API rate-limiting caching layers and multi-metric radar assessment.",
             lighthouse: { perf: 98, access: 100, best: 95, seo: 100 },
@@ -250,80 +282,74 @@ export function exportAuditLog(activities, format) {
     return (
         <section id="projects" className="section-padding projects-page-section" ref={projectsRef}>
             <div className="container">
-                <div className="section-header center text-center">
-                    <span className="section-eyebrow">Production Architectures</span>
-                    <h2 className="section-title">Case Studies & Flagships</h2>
-                    <p className="section-subtitle">Real engineering challenges, documented and deployed.</p>
+                <div className="section-header-compact center text-center">
+                    <span className="section-eyebrow">Engineering Artifacts</span>
+                    <h2 className="section-title">Selected Projects</h2>
+                    <p className="section-subtitle">
+                        Production deployments, enterprise cloud platforms, and open-source contributions.
+                    </p>
                 </div>
 
-                {/* Tech Stack Filter Bar */}
-                <div className="project-filter-bar glass">
-                    <div className="filter-label">
-                        <SlidersHorizontal size={14} className="text-cyan" />
-                        <span>Filter By:</span>
-                    </div>
-                    <div className="filter-buttons-list">
-                        {categories.map((cat) => (
-                            <button
-                                key={cat.id}
-                                className={`filter-btn ${selectedCategory === cat.id ? 'active' : ''}`}
-                                onClick={() => setSelectedCategory(cat.id)}
-                            >
-                                {cat.label}
-                            </button>
-                        ))}
-                    </div>
+                {/* Category Filter Pills */}
+                <div className="project-category-filters">
+                    {categories.map((cat) => (
+                        <button
+                            key={cat.id}
+                            className={`filter-btn ${selectedCategory === cat.id ? 'active' : ''}`}
+                            onClick={() => setSelectedCategory(cat.id)}
+                        >
+                            {cat.label}
+                        </button>
+                    ))}
                 </div>
 
-                <div className="projects-wrapper">
+                <div className="projects-container">
                     {!isMobile ? (
-                        filteredCases.map((project, idx) => (
+                        filteredCases.map((project, index) => (
                             <div className="project-case glass" key={project.id}>
                                 <div className="project-header">
                                     <div className="project-title-area">
-                                        <div className="title-with-badge">
-                                            <h3 className="project-title">{project.title}</h3>
-                                            {project.isWip ? (
-                                                <span className="wip-pill" title="Under active development">
-                                                    <Clock size={12} />
-                                                    <span>In Progress / WIP</span>
-                                                </span>
-                                            ) : (
-                                                <span className="deployed-pill">
-                                                    <CheckCircle2 size={12} />
-                                                    <span>Production Deployed</span>
-                                                </span>
-                                            )}
-                                        </div>
-                                        <div className="project-api-stats">
-                                            <div className="stat-item">
-                                                <Star size={14} /> <span>{stats[project.id]?.stars || 0} Stars</span>
-                                            </div>
-                                            <div className="stat-item">
-                                                <GitFork size={14} /> <span>{stats[project.id]?.forks || 0} Forks</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="project-links">
-                                        {project.previewUrl && (
-                                            <button 
-                                                className="btn btn-primary btn-sm btn-glow"
-                                                onClick={() => onPreview && onPreview(project.previewUrl, project.title)}
-                                                title="Open in-page interactive sandbox preview"
-                                            >
-                                                <Zap size={14} />
-                                                <span>Live Preview</span>
-                                            </button>
-                                        )}
-                                        {project.github ? (
-                                            <a href={project.github} className="icon-link" title="Source Code" target="_blank" rel="noreferrer"><Github size={20} /></a>
+                                        <h3 className="project-title">{project.title}</h3>
+                                        {project.isWip ? (
+                                            <span className="wip-pill">
+                                                <Clock size={12} />
+                                                <span>In Active Development</span>
+                                            </span>
                                         ) : (
-                                            <span className="cloud-crm-tag" title="Deployed on Salesforce Cloud CRM">Salesforce Cloud</span>
-                                        )}
-                                        {project.id !== "analyzer" && project.link && project.link !== "#" && (
-                                            <a href={project.link} className="icon-link" title="Live Site" target="_blank" rel="noreferrer"><ExternalLink size={20} /></a>
+                                            <span className="deployed-pill">
+                                                <CheckCircle2 size={12} />
+                                                <span>Production Deployed</span>
+                                            </span>
                                         )}
                                     </div>
+                                    <div className="project-api-stats">
+                                        <div className="stat-item">
+                                            <Star size={14} /> <span>{stats[project.id]?.stars || 0} Stars</span>
+                                        </div>
+                                        <div className="stat-item">
+                                            <GitFork size={14} /> <span>{stats[project.id]?.forks || 0} Forks</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="project-links">
+                                    {project.previewUrl && (
+                                        <button 
+                                            className="btn btn-primary btn-sm btn-glow"
+                                            onClick={() => onPreview && onPreview(project.previewUrl, project.title)}
+                                            title="Open in-page interactive sandbox preview"
+                                        >
+                                            <Zap size={14} />
+                                            <span>Live Preview</span>
+                                        </button>
+                                    )}
+                                    {project.github ? (
+                                        <a href={project.github} className="icon-link" title="Source Code" target="_blank" rel="noreferrer"><Github size={20} /></a>
+                                    ) : (
+                                        <span className="cloud-crm-tag" title="Deployed on Salesforce Cloud CRM">Salesforce Cloud</span>
+                                    )}
+                                    {project.id !== "analyzer" && project.link && project.link !== "#" && (
+                                        <a href={project.link} className="icon-link" title="Live Site" target="_blank" rel="noreferrer"><ExternalLink size={20} /></a>
+                                    )}
                                 </div>
 
                                 <div className="project-details-grid">
@@ -375,7 +401,7 @@ export function exportAuditLog(activities, format) {
                                     </motion.div>
                                 ) : (
                                     <motion.div
-                                        key="details"
+                                        key="detail"
                                         initial={{ opacity: 0, x: 20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         exit={{ opacity: 0, x: 20 }}

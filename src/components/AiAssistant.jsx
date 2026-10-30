@@ -7,7 +7,7 @@ const AiAssistant = () => {
     const [messages, setMessages] = useState([
         { 
             role: 'assistant', 
-            text: 'Hey! I’m Vishwas Ahuja’s AI Guide. Feel free to ask me about his Salesforce CRM engineering, custom architectures, tech stack, or background!' 
+            text: 'Hey! I’m Vishwas Ahuja’s AI Guide. Feel free to ask me about his Net Forensics platform, Salesforce CRM engineering, custom architectures, tech stack, or background!' 
         }
     ]);
     const [inputValue, setInputValue] = useState('');
@@ -45,27 +45,33 @@ CRITICAL TONE & STYLE RULES:
 - Deliver lively, sharp, and engaging responses in 2 to 3 smooth paragraphs with real context, human problem-solving, and concrete outcomes.
 
 Core Verified Facts about Vishwas Ahuja:
-1. Student Placement Management System (Salesforce Cloud CRM):
-   - The university was managing campus drives on messy, scattered spreadsheets with lost records and slow communication.
+1. Net Forensics – Network Traffic Forensics Platform (Flagship Third-Year Project):
+   - Problem: Network evidence is massive, noisy, and scattered across millions of packets in PCAPs. Manual Wireshark packet-by-packet analysis misses quiet threats like C2 beaconing, DNS tunneling, and slow exfiltration.
+   - Architecture: An asynchronous 4-tier pipeline: React/D3.js dashboard, FastAPI REST/WebSocket backend, Celery + Redis distributed worker queue (tshark, Scapy, dpkt packet decoding), and MinIO (immutable raw PCAPs) + Elasticsearch + PostgreSQL storage.
+   - Detection & ML: Multi-layered detection with Suricata rules, behavioral heuristics (Shannon entropy on DNS, Z-score on outbound byte spikes, JA3/JA4 TLS fingerprinting), and an Isolation Forest anomaly model. All findings tagged with MITRE ATT&CK techniques, SHA-256 evidence chain of custody, and 1-click forensic PDF reports.
+
+2. Student Placement Management System (Salesforce Cloud CRM):
+   - The university was managing campus drives on messy spreadsheets with lost records and slow communication.
    - Vishwas architected a native Salesforce CRM platform with custom Lightning Web Components (LWC) tailored for students (application tracking) and recruiters (fast candidate filtering).
    - Under the hood, custom Apex controllers and record-triggered Salesforce Flows automatically validated GPA/major eligibility and handled interview round transitions.
    - Result: Slashed administrative overhead by 60% and gave university directors real-time KPI analytics.
 
-2. GitHub Profile Analyzer:
+3. GitHub Profile Analyzer:
    - An engineering dashboard querying the GitHub REST API.
    - Uses a custom 1-1000 Developer Score algorithm weighting Stars (3x), Repositories (2x), and Followers (2x), plus account longevity and consistency multipliers.
 
-3. Real-Time Kanban Board:
+4. Real-Time Kanban Board:
    - Built with React 18, Supabase, and PostgreSQL.
    - Features sub-100ms real-time state synchronization across active sessions via WebSockets, with strict Row-Level Security (RLS) data isolation.
 
-4. Neon Snake Game PWA:
+5. Neon Snake Game PWA:
    - High-performance vanilla JavaScript PWA with sub-1ms input latency.
    - Built with Illegal Turn Protection logic to prevent 180° self-collisions and full offline Service Worker caching.
 
-5. Education & Background:
+6. Education & Background:
    - B.Tech CSE (Core) with a Minor in Data Science at Manav Rachna University (2024–2028). Dean's List and VC List Awardee.
-   - Scored 90.8% in Class XII and 94% in Class X.
+   - Class XII (2022–2024): 90.8% from Tagore Academy Public School.
+   - Class X (2010–2022): 94% from St. Anthony's Senior Secondary School.
    - Contact: vishwasahuja62@gmail.com | +91-8882449462 | LinkedIn: linkedin.com/in/vishwas-ahuja-6b5225327`;
 
         try {
@@ -109,9 +115,10 @@ Core Verified Facts about Vishwas Ahuja:
                 role: 'assistant',
                 text: `Vishwas is an aspiring software engineer pursuing B.Tech CSE (Data Science minor) at Manav Rachna University, recognized on the Dean's List.
 
-His flagship project is an enterprise **Student Placement Management System** on Salesforce CRM Cloud, where he replaced messy campus drive spreadsheets with automated Lightning Web Components (LWC), custom Apex eligibility logic, and Salesforce Flows—slashing processing time by 60%.
-
-He has also engineered a **GitHub Profile Analyzer** with a weighted 1-1000 Developer Score algorithm and a **Real-Time Kanban Board** with sub-100ms Supabase websocket sync. You can reach him directly at **vishwasahuja62@gmail.com**!`
+His core projects include:
+• **Net Forensics**: An asynchronous network traffic forensics platform decoding L2–L7 PCAP packets, using Shannon entropy and Isolation Forest ML to detect quiet attacks (DNS tunneling, C2 beaconing) with SHA-256 chain of custody.
+• **Salesforce CRM Placement System**: Enterprise cloud app with custom Lightning Web Components (LWC), custom Apex eligibility logic, and Salesforce Flows—slashing processing time by 60%.
+• **GitHub Profile Analyzer & Real-Time Kanban**: Full-stack platforms backed by custom scoring algorithms and Supabase websockets. Reach him directly at **vishwasahuja62@gmail.com**!`
             }]);
             setIsTyping(false);
         }, 500);
@@ -183,6 +190,9 @@ He has also engineered a **GitHub Profile Analyzer** with a weighted 1-1000 Deve
                             <div ref={messagesEndRef} />
 
                             <div className="suggestion-chips">
+                                <button onClick={() => handleSend(null, "Tell me about your Net Forensics platform.")}>
+                                    "Net Forensics Platform"
+                                </button>
                                 <button onClick={() => handleSend(null, "Tell me about your Salesforce CRM Placement project.")}>
                                     "Salesforce CRM Project"
                                 </button>
@@ -191,9 +201,6 @@ He has also engineered a **GitHub Profile Analyzer** with a weighted 1-1000 Deve
                                 </button>
                                 <button onClick={() => handleSend(null, "What is your core tech stack and academic background?")}>
                                     "Tech Stack & Education"
-                                </button>
-                                <button onClick={() => handleSend(null, "How can I contact or hire Vishwas?")}>
-                                    "Contact Info"
                                 </button>
                             </div>
                         </motion.div>
