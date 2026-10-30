@@ -282,7 +282,7 @@ const Hero = ({ onNavigate }) => {
                                 <CloudLightning className="layer-icon" size={20} />
                                 <div className="layer-info">
                                     <div className="layer-name">Edge Delivery</div>
-                                    <div className="layer-tech">Kuberns AI Auto-Deploy</div>
+                                    <div className="layer-tech">Netlify Edge Auto-Deploy</div>
                                 </div>
                                 <div className="pulse-dot deploy"></div>
                             </div>

@@ -15,7 +15,7 @@ const Deployment = () => {
                         transition={{ duration: 0.7 }}
                     >
                         <h2 className="section-title">Production Infrastructure</h2>
-                        <h3 className="deploy-subtitle">Powered by Kuberns AI</h3>
+                        <h3 className="deploy-subtitle">Powered by Netlify Edge Network</h3>
 
                         <p className="deploy-lead">
                             As a BTech student, I treat deployment as a first-class citizen. I don't just "push code" — I manage infrastructure.
@@ -26,7 +26,7 @@ const Deployment = () => {
                                 <Server size={20} className="infra-icon" />
                                 <div>
                                     <h4>Edge Deployment</h4>
-                                    <p>Global low-latency delivery via Kuberns AI Edge nodes.</p>
+                                    <p>Global low-latency delivery via Netlify Edge CDN nodes.</p>
                                 </div>
                             </div>
                             <div className="infra-card glass">
@@ -47,7 +47,7 @@ const Deployment = () => {
 
                         <div className="deploy-status-box glass">
                             <span className="pulse-dot active"></span>
-                            <span className="status-text">Stack: React 18 / Vite / Kuberns AI / Netlify</span>
+                            <span className="status-text">Stack: React 18 / Vite / Netlify Edge</span>
                         </div>
                     </motion.div>
 
@@ -70,16 +70,16 @@ const Deployment = () => {
                             </div>
                         </div>
                         <div className="terminal-body">
-                            <div className="terminal-line"><span className="prompt">$</span> kuberns login --user vishwas</div>
-                            <div className="terminal-line success">✔ Authenticated via DataScience-Auth-V2</div>
-                            <div className="terminal-line"><span className="prompt">$</span> kuberns deploy --env prod</div>
+                            <div className="terminal-line"><span className="prompt">$</span> git push origin main</div>
+                            <div className="terminal-line success">&#10004; Netlify CI/CD Triggered [GitHub Webhook]</div>
+                            <div className="terminal-line"><span className="prompt">$</span> netlify deploy --prod --build</div>
                             <div className="terminal-line">... Initializing build environment</div>
                             <div className="terminal-line">... Analyzing React project structure</div>
                             <div className="terminal-line">... Optimizing assets for Edge Delivery</div>
                             <div className="terminal-line">... Deploying to 6 global locations</div>
                             <div className="terminal-line success">---------------------------------------</div>
                             <div className="terminal-line success">🚀 DEPLOYMENT SUCCESSFUL [422ms]</div>
-                            <div className="terminal-line">URL: <span className="text-cyan">vishwas-portfolio.kuberns.ai</span></div>
+                            <div className="terminal-line">URL: <span className="text-cyan">vishwas-ahuja-portfolio.netlify.app</span></div>
                             <div className="terminal-line active-line"><span className="prompt">$</span> <span className="cursor"></span></div>
                         </div>
                     </motion.div>

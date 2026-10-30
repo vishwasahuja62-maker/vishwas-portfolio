@@ -23,7 +23,7 @@ const AiFeatures = () => {
         {
             icon: <Globe size={28} />,
             title: "Zero-Latency Edge Inference",
-            desc: "Leveraging Groq's LPUs and Kuberns AI edge points to ensure AI responses are generated in under 500ms, providing a seamless 'human-like' interaction experience.",
+            desc: "Leveraging Groq's LPUs and Netlify Edge serverless network to ensure AI responses are generated in under 500ms, providing a seamless 'human-like' interaction experience.",
             badge: "Architecture"
         },
         {

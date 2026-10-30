@@ -170,7 +170,7 @@ function App() {
             </main>
 
             <footer>
-                <p>&copy; {new Date().getFullYear()} Vishwas Ahuja. Deployed on Kuberns AI.</p>
+                <p>&copy; {new Date().getFullYear()} Vishwas Ahuja. Deployed on Netlify.</p>
             </footer>
         </div>
     );
