@@ -13,14 +13,24 @@ import {
 
 const timelineEvents = [
     {
-        year: '2022 – 2024',
+        year: '2010 – 2022',
         period: 'Secondary Education',
-        title: 'Class X & XII Board Examinations',
-        subtitle: 'Bhatnagar International Summit School, New Delhi',
-        desc: 'Graduated with 90.8% in Class XII (CBSE) and 94% in Class X. Built solid mathematical fundamentals and early curiosity in computing.',
-        tag: 'Academics',
+        title: 'Class X Board Examination (94%)',
+        subtitle: "St. Anthony’s Senior Secondary School",
+        desc: 'Completed secondary schooling with 94% marks (CBSE). Built strong foundations in mathematics and science, sparking an early passion for technology and computing.',
+        tag: 'Schooling',
         icon: <School size={20} />,
         color: 'blue'
+    },
+    {
+        year: '2022 – 2024',
+        period: 'Senior Secondary Education',
+        title: 'Class XII Board Examination (90.8%)',
+        subtitle: 'Tagore Academy Public School',
+        desc: 'Completed senior secondary education in the Science Stream with 90.8% (CBSE). Deepened analytical thinking, physics, and computer science problem-solving skills.',
+        tag: 'Academics',
+        icon: <School size={20} />,
+        color: 'purple'
     },
     {
         year: '2024 – Present (Exp. 2028)',
@@ -30,7 +40,7 @@ const timelineEvents = [
         desc: 'Maintained outstanding academic excellence earning honors on both the Dean\'s List and Vice Chancellor\'s (VC) List. Specializing in full-stack engineering, algorithms, and distributed data systems.',
         tag: 'University',
         icon: <GraduationCap size={20} />,
-        color: 'purple'
+        color: 'cyan'
     },
     {
         year: 'June 2026 – July 2026',
@@ -144,4 +154,3 @@ const Timeline = ({ onNavigate }) => {
 };
 
 export default Timeline;
-

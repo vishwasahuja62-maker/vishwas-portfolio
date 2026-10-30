@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { GraduationCap, Award, Calendar, BookOpen } from 'lucide-react';
+import { GraduationCap, Award, Calendar, BookOpen, School } from 'lucide-react';
 
 const Education = () => {
     const educationList = [
@@ -8,7 +8,7 @@ const Education = () => {
             institution: "Manav Rachna University",
             degree: "B.Tech in Computer Science Engineering (Core)",
             specialization: "Minor: Data Science",
-            year: "Expected 2028",
+            year: "2024 – Present (Exp. 2028)",
             grade: "Undergraduate",
             highlight: "Dean's List & VC List Awardee"
         },
@@ -16,14 +16,14 @@ const Education = () => {
             institution: "Tagore Academy Public School",
             degree: "Class XII (CBSE)",
             specialization: "Science Stream",
-            year: "2024",
+            year: "2022 – 2024",
             grade: "90.8%"
         },
         {
             institution: "St. Anthony’s Senior Secondary School",
             degree: "Class X (CBSE)",
             specialization: "Secondary Education",
-            year: "2022",
+            year: "2010 – 2022",
             grade: "94%"
         }
     ];
@@ -84,4 +84,3 @@ const Education = () => {
 };
 
 export default Education;
-
