@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 
+const BG_COLOR = '#0d0f12';
+
 const Background = () => {
     const canvasRef = useRef(null);
 
@@ -11,6 +13,9 @@ const Background = () => {
         const resize = () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            // Immediately paint solid dark bg on resize — prevents transparent flash frame
+            ctx.fillStyle = BG_COLOR;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
         };
 
         window.addEventListener('resize', resize);
@@ -32,7 +37,10 @@ const Background = () => {
         }
 
         const animate = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Use fillRect with dark color every frame instead of clearRect
+            // clearRect makes canvas transparent which causes a flash on load/resize
+            ctx.fillStyle = BG_COLOR;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // Draw subtle grid
             ctx.strokeStyle = 'rgba(6, 182, 212, 0.03)';
@@ -89,7 +97,8 @@ const Background = () => {
                 left: 0,
                 zIndex: -1,
                 pointerEvents: 'none',
-                background: '#0d0f12'
+                background: BG_COLOR,
+                display: 'block',
             }}
         />
     );
